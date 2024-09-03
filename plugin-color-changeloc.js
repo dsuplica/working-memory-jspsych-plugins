@@ -1,14 +1,30 @@
 //helper functions go here
+
+// simple range
 function range(start=0,end){
   return [...Array(end-start).keys()].map(i => i + start);
 }
 
+// random number between min and max
 function randomNumber(min, max) {
   return Math.random() * (max - min) + min;
 }
 
+// euclidean distance
 function dist_between_points(x1,y1,x2,y2){
   return Math.sqrt((x2-x1)**2 + (y2-y1)**2);
+}
+
+// Fisher-Yates shuffle
+
+function shuffleArray(arr){
+  let newArr = [];
+
+  while (arr.length){
+    let i = Math.floor(Math.random() * arr.length);
+    newArr.push(arr.splice(i,1)[0]);
+  }
+  return newArr;
 }
 
 
@@ -115,7 +131,7 @@ var jsPsychColorChangeLoc = (function (jspsych) {
      * Display stimuli simultaneously, then test on a array of the same with one changed
      *
      * @author Darius Suplica
-     * @see {@link {https://github.com/dsuplica/change-localization-jspsych-plugins-url}}
+     * @see {@link {https://github.com/dsuplica/change-localization-jspsych-plugins}}
      */
     class ColorChangeLocPlugin {
       constructor(jsPsych) {
@@ -128,7 +144,8 @@ var jsPsychColorChangeLoc = (function (jspsych) {
         let test_item; // new value for changed item
         let response_array = range(1, trial.n_colors + 1); // array of possible responses
         const canvasSize = 600;
-        const edge_buffer = 50; 
+        const edge_buffer = 50;
+        const stim_buffer = 10; 
         const stim_size = 40;
 
 
@@ -182,18 +199,35 @@ var jsPsychColorChangeLoc = (function (jspsych) {
 
 
       while (position_array.length < trial.n_colors) {
-
         let x = randomNumber(edge_buffer, canvasSize - edge_buffer);
         let y = randomNumber(edge_buffer, canvasSize - edge_buffer);
-
-
+    
+        if (dist_between_points(x, y, 0, 0) < stim_size + stim_buffer) {
+            continue; // too close to center
+        }
         
+        for ([x2,y2] of position_array) {
+            if (dist_between_points(x, y, x2, y2) < stim_size + stim_buffer) {
+                continue; // too close to another stimulus
+            }
+        }
+
+        // Add the position to the array if it passes the check
+        position_array.push([x, y]);
+    }
 
 
+    // CREATE STIMULI
+
+    let stimulus_array = [];
+    let colors_shuff = shuffleArray(trial.colors);
+    for (let i = 0; i < trial.n_colors; i++) {
+      stimulus_array.push({stimulus: colors_shuff[i], type: "color"});
+    }
+
+    
 
 
-
-      }
 
 
 
