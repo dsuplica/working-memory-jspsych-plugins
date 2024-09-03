@@ -154,12 +154,13 @@ var jsPsychColorChangeLoc = (function (jspsych) {
 
 
     trial(display_element, trial) {
+
       let test_index; // index of item to be changed
       let test_item; // new value for changed item
       let response_array = range(1, trial.n_colors + 1); // array of possible responses
       const valid_responses = response_array.map(String); // array of valid responses
       const canvasSize = 600;
-      const edge_buffer = 50;
+      const edge_buffer = 100;
       const stim_buffer = 10; 
       const stim_size = 40;
 
@@ -214,19 +215,25 @@ var jsPsychColorChangeLoc = (function (jspsych) {
 
       const stim_diag = Math.sqrt(2) * stim_size; // diagonal distance
 
+      position_loop:
       while (position_array.length < trial.n_colors) {
         let x = randomInt(edge_buffer, canvasSize - edge_buffer);
         let y = randomInt(edge_buffer, canvasSize - edge_buffer);
+        let x2;
+        let y2;
     
-        if (dist_between_points(x, y, 0, 0) < stim_size + stim_buffer) {
-            continue; // too close to center
+        if (dist_between_points(x, y, 0, 0) < stim_diag * 2 + stim_buffer) {
+            continue position_loop; // too close to center
         }
         
-        for ([x2,y2] of position_array) {
-            if (dist_between_points(x, y, x2, y2) < stim_diag + stim_buffer) {
-                continue; // too close to another stimulus
+        if (position_array.length > 0) {
+          for ([x2,y2] of position_array) {
+              if (dist_between_points(x, y, x2, y2) < stim_diag * 2 + stim_buffer) {
+                  continue position_loop; // too close to another stimulus
+              }
             }
         }
+        
 
         // Add the position to the array if it passes the check
         position_array.push([x, y]);
@@ -254,7 +261,7 @@ var jsPsychColorChangeLoc = (function (jspsych) {
             width: stim_size,
             height: stim_size,
             left: pos[0] - stim_size / 2, // shift to convert from center to left and top
-            top: pos[1] + stim_size / 2,
+            top: pos[1] - stim_size / 2,
             fill: stimulus,
             hasBorders: false,
             hasControls: false,
@@ -268,8 +275,8 @@ var jsPsychColorChangeLoc = (function (jspsych) {
           if (label) {
             //ADD NUMBER LABEL//
             var label_object = new fabric.Text(label.toString(), {
-              left: pos[0] - stim_size / 2, // shift to convert from center to left and top
-              top: pos[1] + stim_size / 2,
+              left: pos[0] - stim_size / 4, // shift to convert from center to left and top
+              top: pos[1] - stim_size / 2,
               fill: "#9897A9",
               fontSize: 30,
               fontWeight: "bold",
@@ -289,14 +296,14 @@ var jsPsychColorChangeLoc = (function (jspsych) {
 
     const present_test = async () => {
       //CREATE ARRAY OF DESIRED RESPONSES & SHUFFLE//
-      let response_array = shuffleArray(response_array);
+      response_array = shuffleArray(response_array);
       // get index of test item
       test_index = randomInt(0,stimulus_array.length);
 
       for (var i = 0; i < stimulus_array.length; i++) {
         // replace test stim with a new one
         if (i === test_index) {
-          test_item = colors_shuff[7];
+          test_item = colors_shuff[trial.n_colors + 1];
           draw_stim(test_item, position_array[i], response_array[i]);
         } else {
           draw_stim(
@@ -342,21 +349,29 @@ var jsPsychColorChangeLoc = (function (jspsych) {
         });
         canvas.requestRenderAll();
           this.jsPsych.pluginAPI.setTimeout(function () {
-            test_procedure();
+            present_test();
           }, trial.delay_duration); // delay period, executed at end
         }, trial.stim_duration);
       };
 
       // actually run the trial here
       show_fixation();
-      this.jsPsych.pluginAPI.setTimeout(trial_procedure, trial.fixation_duration);
 
+      this.jsPsych.pluginAPI.setTimeout(function () {
+        //INTERTRIAL INTERVAL//
+        trial_procedure();
+      }, trial.fixation_duration);
+      
       function afterResponse(info){
         end_trial(info.key,info.rt)
       }
       const end_trial = (key,rt) => {
 
+        // remove event listeners
+        $(document).unbind();
         // data saving
+        // let accuracy = jsPsych.pluginAPI.compareKeys(key, String(response_array[test_index]));
+        let accuracy = key === String(response_array[test_index]);
         var trial_data = {
           trial_exp: "color_change_localization",
           key: key,
@@ -368,7 +383,7 @@ var jsPsychColorChangeLoc = (function (jspsych) {
           correct_answer: response_array[test_index],
           response_array: response_array,
           n_colors: trial.n_colors,
-          accuracy: key == response_array[test_index],
+          accuracy: accuracy,
           
 
         };

@@ -114,16 +114,25 @@ var changeloc_instructions = {
   };
 
 var trial = {
-type: jsPsychColorChangeLoc,
-n_colors: jsPsych.timelineVariable("n_colors"),
+    type: jsPsychColorChangeLoc,
+        n_colors: jsPsych.timelineVariable("n_colors"),
+
 };
 
 var test_procedure = {
-timeline: [trial],
-timeline_variables: [{ n_colors: 6 }],
-repetitions: 60,
+    timeline: [trial],
+    timeline_variables: [{ n_colors: 6 }],
+    repetitions: 60,
 };  
 
+var end_trial = {
+    type: jsPsychHtmlKeyboardResponse,
+    stimulus:
+      "This is the end of the experiment. Thank you for participating! <a href='https://app.prolific.co/submissions/complete?cc=61E9BFCF'>Click here</a> to return to Prolific.",
+    choices: "NO_KEYS",
+  };
+
+  
 var timeline = [];
 
 // timeline.push(pavlovia_init);
@@ -135,4 +144,6 @@ var timeline = [];
 
 timeline.push(changeloc_instructions);
 timeline.push(test_procedure); // change localization
-jsPsych.run(timeline)
+timeline.push(end_trial);
+
+jsPsych.run(timeline);
