@@ -31,58 +31,58 @@ function shuffleArray(arr){
 
 // code is based on Temilade Adekoya's plugin-ChangeLoc plugin
 var jsPsychColorChangeLoc = (function (jspsych) {
-    "use strict";
-   
-    const info = {
-      name: "ColorChangeLocalizationPlugin",
-      version: "1.0.0", // When working in a Javascript environment with no build, you will need to manually put set the version information. This is used for metadata purposes and publishing.
-      parameters: {
+  "use strict";
+  
+  const info = {
+    name: "ColorChangeLocalizationPlugin",
+    version: "1.0.0", // When working in a Javascript environment with no build, you will need to manually put set the version information. This is used for metadata purposes and publishing.
+    parameters: {
 
-        /** The duration of fixation prior to stimulus presentation */
-        fixation_duration: {
-          type: jspsych.ParameterType.INT,
-          default: 1000,
-          pretty_name: "Fixation duration",
-        },
-        /** The number of TOTAL colors to show in the stimulus display*/
-        n_colors: {
-          type: jspsych.ParameterType.INT,
-          default: 6,
-          pretty_name: "Number of colors",
-        },
-
-        /** Colors which can appear (hex) */
-        colors: {
-          type: jspsych.ParameterType.STRING,
-          pretty_name: "Colors",
-          default: [
-            "#c9281c",
-            "#f0e10c",
-            "#158009",
-            "#062a9e",
-            "#00FFFF",
-            "#FF00FF",
-            "#000000",
-            "#FFFFFF",
-          ],
-        },
-        /** The duration of the stimulus display */
-        stim_duration: {
-          type: jspsych.ParameterType.INT,
-          default: 250,
-          pretty_name: "Stimulus duration",
-        },
-
-        /** the duration of the delay period (ms) */
-
-        delay_duration: {
-          type: jspsych.ParameterType.INT,
-          default: 4000,
-          pretty_name: "Delay duration",
-        }
-
-
+      /** The duration of fixation prior to stimulus presentation */
+      fixation_duration: {
+        type: jspsych.ParameterType.INT,
+        default: 1000,
+        pretty_name: "Fixation duration",
       },
+      /** The number of TOTAL colors to show in the stimulus display*/
+      n_colors: {
+        type: jspsych.ParameterType.INT,
+        default: 6,
+        pretty_name: "Number of colors",
+      },
+
+      /** Colors which can appear (hex) */
+      colors: {
+        type: jspsych.ParameterType.STRING,
+        pretty_name: "Colors",
+        default: [
+          "#c9281c",
+          "#f0e10c",
+          "#158009",
+          "#062a9e",
+          "#00FFFF",
+          "#FF00FF",
+          "#000000",
+          "#FFFFFF",
+        ],
+      },
+      /** The duration of the stimulus display */
+      stim_duration: {
+        type: jspsych.ParameterType.INT,
+        default: 250,
+        pretty_name: "Stimulus duration",
+      },
+
+      /** the duration of the delay period (ms) */
+
+      delay_duration: {
+        type: jspsych.ParameterType.INT,
+        default: 4000,
+        pretty_name: "Delay duration",
+      }
+
+
+    },
     data: {
       /** name of this trial */
       trial_exp: {
@@ -138,36 +138,36 @@ var jsPsychColorChangeLoc = (function (jspsych) {
   };
 
   
-    /**
-     * **{plugin-color-changeloc}**
-     *
-     * A plugin to run color change localization experiments of varying set sizes
-     * Display stimuli simultaneously, then test on a array of the same with one changed
-     *
-     * @author Darius Suplica
-     * @see {@link {https://github.com/dsuplica/change-localization-jspsych-plugins}}
-     */
-    class ColorChangeLocPlugin {
-      constructor(jsPsych) {
-        this.jsPsych = jsPsych;
-      }
+  /**
+   * **{plugin-color-changeloc}**
+   *
+   * A plugin to run color change localization experiments of varying set sizes
+   * Display stimuli simultaneously, then test on a array of the same with one changed
+   *
+   * @author Darius Suplica
+   * @see {@link {https://github.com/dsuplica/change-localization-jspsych-plugins}}
+   */
+  class ColorChangeLocPlugin {
+    constructor(jsPsych) {
+      this.jsPsych = jsPsych;
+    }
 
 
-      trial(display_element, trial) {
-        let test_index; // index of item to be changed
-        let test_item; // new value for changed item
-        let response_array = range(1, trial.n_colors + 1); // array of possible responses
-        const valid_responses = response_array.map(String); // array of valid responses
-        const canvasSize = 600;
-        const edge_buffer = 50;
-        const stim_buffer = 10; 
-        const stim_size = 40;
+    trial(display_element, trial) {
+      let test_index; // index of item to be changed
+      let test_item; // new value for changed item
+      let response_array = range(1, trial.n_colors + 1); // array of possible responses
+      const valid_responses = response_array.map(String); // array of valid responses
+      const canvasSize = 600;
+      const edge_buffer = 50;
+      const stim_buffer = 10; 
+      const stim_size = 40;
 
 
-        // MAIN EXPERIMENT CODE
+      // MAIN EXPERIMENT CODE
 
 
-        //CREATE CANVAS OBJECT//
+      //CREATE CANVAS OBJECT//
       display_element.innerHTML =
       "<div id='jspsych-changeloc-plugin' style='position: relative; width:" +
       canvasSize +
@@ -378,7 +378,7 @@ var jsPsychColorChangeLoc = (function (jspsych) {
       }
     }
   }
-    ColorChangeLocPlugin.info = info;
-  
-    return ColorChangeLocPlugin;
-  })(jsPsychModule);
+  ColorChangeLocPlugin.info = info;
+
+  return ColorChangeLocPlugin;
+})(jsPsychModule);
