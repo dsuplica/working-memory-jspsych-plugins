@@ -223,7 +223,7 @@ var jsPsychColorChangeLoc = (function (jspsych) {
         let x2;
         let y2;
     
-        if (dist_between_points(x, y, 0, 0) < stim_diag * 2 + stim_buffer) {
+        if (dist_between_points(x, y, 0, 0) < stim_diag * 3 + stim_buffer) {
             continue position_loop; // too close to center
         }
         
