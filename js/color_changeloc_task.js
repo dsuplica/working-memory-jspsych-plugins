@@ -112,16 +112,37 @@ var changeloc_instructions = {
          contains 60 trials in total.</p><p> Press any key to begin. </p>
         `,
   };
+  
 
 var trial = {
     type: jsPsychColorChangeLoc,
+        fixation_duration: jsPsych.timelineVariable("fixation_duration"),
         n_colors: jsPsych.timelineVariable("n_colors"),
+        colors: jsPsych.timelineVariable("colors"),
+        stim_duration: jsPsych.timelineVariable("stim_duration"),
+        delay_duration: jsPsych.timelineVariable("delay_duration"),
+
 
 };
 
+colors = [
+    "#c9281c",
+    "#f0e10c",
+    "#158009",
+    "#062a9e",
+    "#00FFFF",
+    "#FF00FF",
+    "#000000",
+    "#FFFFFF",
+]
+
 var test_procedure = {
     timeline: [trial],
-    timeline_variables: [{ n_colors: 6 }],
+    timeline_variables: [{fixation_duration: 1000,
+                        n_colors: 6,
+                        colors: colors,
+                        stim_duration: 250,
+                        delay_duration: 4000}],
     repetitions: 60,
 };  
 
@@ -132,7 +153,7 @@ var end_trial = {
     choices: "NO_KEYS",
   };
 
-  
+
 var timeline = [];
 
 // timeline.push(pavlovia_init);
