@@ -18,14 +18,15 @@ function dist_between_points(x1,y1,x2,y2){
 // Fisher-Yates shuffle
 
 function shuffleArray(arr){
+	ixs = [...Array(arr.length).keys()]
   let newArr = [];
-
-  while (arr.length){
-    let i = Math.floor(Math.random() * arr.length);
-    newArr.push(arr.splice(i,1)[0]);
+  while (ixs.length){
+    let i = Math.floor(Math.random() * ixs.length);
+    newArr.push(arr[ixs.splice(i,1)]);
   }
   return newArr;
 }
+
 
 
 
