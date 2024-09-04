@@ -46,7 +46,7 @@ var jsPsychColorChangeLoc = (function (jspsych) {
         pretty_name: "Fixation duration",
       },
       /** The number of TOTAL colors to show in the stimulus display*/
-      n_colors: {
+      set_size: {
         type: jspsych.ParameterType.INT,
         default: 6,
         pretty_name: "Number of colors",
@@ -128,7 +128,7 @@ var jsPsychColorChangeLoc = (function (jspsych) {
         default: [],
       },
       /** Number of colors */
-      n_colors: {
+      set_size: {
         type: jspsych.ParameterType.INT,
       },
       /** Accuracy */
@@ -158,7 +158,7 @@ var jsPsychColorChangeLoc = (function (jspsych) {
 
       let test_index; // index of item to be changed
       let test_item; // new value for changed item
-      let response_array = range(1, trial.n_colors + 1); // array of possible responses
+      let response_array = range(1, trial.set_size + 1); // array of possible responses
       const valid_responses = response_array.map(String); // array of valid responses
       const canvasSize = 600;
       const edge_buffer = 100;
@@ -217,7 +217,7 @@ var jsPsychColorChangeLoc = (function (jspsych) {
       const stim_diag = Math.sqrt(2) * stim_size; // diagonal distance
 
       position_loop:
-      while (position_array.length < trial.n_colors) {
+      while (position_array.length < trial.set_size) {
         let x = randomInt(edge_buffer, canvasSize - edge_buffer);
         let y = randomInt(edge_buffer, canvasSize - edge_buffer);
         let x2;
@@ -245,7 +245,7 @@ var jsPsychColorChangeLoc = (function (jspsych) {
 
     let stimulus_array = [];
     let colors_shuff = shuffleArray(trial.colors);
-    for (let i = 0; i < trial.n_colors; i++) { // append stimuli (should be already shuffled)
+    for (let i = 0; i < trial.set_size; i++) { // append stimuli (should be already shuffled)
       stimulus_array.push({stimulus: colors_shuff[i], type: "color"});
     }
 
@@ -304,7 +304,7 @@ var jsPsychColorChangeLoc = (function (jspsych) {
       for (var i = 0; i < stimulus_array.length; i++) {
         // replace test stim with a new one
         if (i === test_index) {
-          test_item = colors_shuff[trial.n_colors + 1];
+          test_item = colors_shuff[trial.set_size + 1];
           draw_stim(test_item, position_array[i], response_array[i]);
         } else {
           draw_stim(
@@ -383,7 +383,7 @@ var jsPsychColorChangeLoc = (function (jspsych) {
           test_item: test_item,
           correct_answer: response_array[test_index],
           response_array: response_array,
-          n_colors: trial.n_colors,
+          set_size: trial.set_size,
           accuracy: accuracy,
           
 
