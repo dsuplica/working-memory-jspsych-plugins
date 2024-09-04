@@ -103,44 +103,44 @@ var changeloc_instructions = {
     type: jsPsychHtmlKeyboardResponse,
     stimulus: `
         <p> In this first part of the experiment, a central fixation "+" will appear onto the screen 
-        for 500 milliseconds (0.5 second), followed by an array of <strong>six</strong>
-        colored squares appearing for 250 milliseconds (0.25 second).</p><p>
-        Then, another array of <strong>six</strong> colored squares with numbers (1,2,3,4,5,6)
+        for 500 milliseconds (0.5 second), followed by an array of <strong>four</strong>
+        orientations appearing for 250 milliseconds (0.25 second).</p><p>
+        Then, another array of <strong>four</strong> colored squares with numbers (1,2,3,4)
         above them will appear after a 4-second blank screen.</p><p> Press the 
         corresponding button on your <strong>KEYBOARD</strong> to indicate which of the
-        squares has changed in color. Only one of the objects will change .</p><p>The experiment
+        images has changed. Only one of the objects will change .</p><p>The experiment
          contains 60 trials in total.</p><p> Press any key to begin. </p>
         `,
   };
   
 
 var trial = {
-    type: jsPsychColorChangeLoc,
+    type: jsPsychImageChangeLoc,
         fixation_duration: jsPsych.timelineVariable("fixation_duration"),
-        n_colors: jsPsych.timelineVariable("n_colors"),
-        colors: jsPsych.timelineVariable("colors"),
+        n_stimuli: jsPsych.timelineVariable("n_stimuli"),
+        images: jsPsych.timelineVariable("images"),
         stim_duration: jsPsych.timelineVariable("stim_duration"),
         delay_duration: jsPsych.timelineVariable("delay_duration"),
 
 
 };
 
-colors = [
-    "#c9281c",
-    "#f0e10c",
-    "#158009",
-    "#062a9e",
-    "#00FFFF",
-    "#FF00FF",
-    "#000000",
-    "#FFFFFF",
-]
+var images = [
+  "stim/0.png",
+  "stim/45.png",
+  "stim/90.png",
+  "stim/135.png",
+  "stim/180.png",
+  "stim/225.png",
+  "stim/270.png",
+  "stim/315.png",
+];
 
 var test_procedure = {
     timeline: [trial],
     timeline_variables: [{fixation_duration: 1000,
-                        n_colors: 6,
-                        colors: colors,
+                        n_stimuli: 4,
+                        images: images,
                         stim_duration: 250,
                         delay_duration: 4000}],
     repetitions: 60,
