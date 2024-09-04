@@ -31,11 +31,11 @@ function shuffleArray(arr){
 
 
 // code is based on Temilade Adekoya's plugin-ChangeLoc plugin
-var jsPsychColorChangeLoc = (function (jspsych) {
+var jsPsychImageChangeLoc = (function (jspsych) {
   "use strict";
   
   const info = {
-    name: "ColorChangeLocalizationPlugin",
+    name: "ImageChangeLocalizationPlugin",
     version: "1.0.0", // When working in a Javascript environment with no build, you will need to manually put set the version information. This is used for metadata purposes and publishing.
     parameters: {
 
@@ -140,15 +140,16 @@ var jsPsychColorChangeLoc = (function (jspsych) {
 
   
   /**
-   * **{plugin-color-changeloc}**
+   * **{plugin-image-changeloc}**
    *
-   * A plugin to run color change localization experiments of varying set sizes
+   * A plugin to run image change localization experiments of varying set sizes
+   * Useful for orientation or shape trials
    * Display stimuli simultaneously, then test on a array of the same with one changed
    *
    * @author Darius Suplica
    * @see {@link {https://github.com/dsuplica/change-localization-jspsych-plugins}}
    */
-  class ColorChangeLocPlugin {
+  class ImageChangeLocPlugin {
     constructor(jsPsych) {
       this.jsPsych = jsPsych;
     }
@@ -240,13 +241,12 @@ var jsPsychColorChangeLoc = (function (jspsych) {
         position_array.push([x, y]);
     }
 
-
     // CREATE STIMULI
 
     let stimulus_array = [];
-    let colors_shuff = shuffleArray(trial.colors);
+    let images_shuff = shuffleArray(trial.images);
     for (let i = 0; i < trial.set_size; i++) { // append stimuli (should be already shuffled)
-      stimulus_array.push({stimulus: colors_shuff[i], type: "color"});
+      stimulus_array.push({stimulus: images_shuff[i], type: "image"});
     }
 
 
@@ -254,44 +254,41 @@ var jsPsychColorChangeLoc = (function (jspsych) {
 
     // drawing functions, basically straight copy paste
     const draw_stim = (stimulus, pos, label) => {
-      var pattern = /^#/;
-      var is_color = pattern.test(stimulus); //SEARCH FOR '#' IN STIMULUS ARGUMENT TO CONFIRM STIMULUS IS A COLOR//
       return new Promise(async (resolve, reject) => {
-        if (is_color) {
-          var rect = new fabric.Rect({
-            width: stim_size,
-            height: stim_size,
-            left: pos[0] - stim_size / 2, // shift to convert from center to left and top
+        var img = new fabric.Image.fromURL({
+          width: stim_size,
+          height: stim_size,
+          left: pos[0] - stim_size / 2, // shift to convert from center to left and top
+          top: pos[1] - stim_size / 2,
+          fill: stimulus,
+          hasBorders: false,
+          hasControls: false,
+          hoverCursor: "default",
+          lockMovementX: true,
+          lockMovementY: true,
+        });
+        canvas.add(img);
+        canvas.requestRenderAll();
+        resolve();
+        if (label) {
+          //ADD NUMBER LABEL//
+          var label_object = new fabric.Text(label.toString(), {
+            left: pos[0] - stim_size / 4, // shift to convert from center to left and top
             top: pos[1] - stim_size / 2,
-            fill: stimulus,
+            fill: "#9897A9",
+            fontSize: 30,
+            fontWeight: "bold",
             hasBorders: false,
             hasControls: false,
             hoverCursor: "default",
             lockMovementX: true,
             lockMovementY: true,
           });
-          canvas.add(rect);
+          canvas.add(label_object);
           canvas.requestRenderAll();
           resolve();
-          if (label) {
-            //ADD NUMBER LABEL//
-            var label_object = new fabric.Text(label.toString(), {
-              left: pos[0] - stim_size / 4, // shift to convert from center to left and top
-              top: pos[1] - stim_size / 2,
-              fill: "#9897A9",
-              fontSize: 30,
-              fontWeight: "bold",
-              hasBorders: false,
-              hasControls: false,
-              hoverCursor: "default",
-              lockMovementX: true,
-              lockMovementY: true,
-            });
-            canvas.add(label_object);
-            canvas.requestRenderAll();
-            resolve();
-          }
         }
+
       });
     };
 
@@ -304,7 +301,7 @@ var jsPsychColorChangeLoc = (function (jspsych) {
       for (var i = 0; i < stimulus_array.length; i++) {
         // replace test stim with a new one
         if (i === test_index) {
-          test_item = colors_shuff[trial.set_size + 1];
+          test_item = images_shuff[trial.set_size + 1];
           draw_stim(test_item, position_array[i], response_array[i]);
         } else {
           draw_stim(
@@ -374,7 +371,7 @@ var jsPsychColorChangeLoc = (function (jspsych) {
         // let accuracy = jsPsych.pluginAPI.compareKeys(key, String(response_array[test_index]));
         let accuracy = key === String(response_array[test_index]);
         var trial_data = {
-          trial_exp: "color_change_localization",
+          trial_exp: "image_change_localization",
           key: key,
           rt: rt,
           stimuli: stimulus_array,
@@ -394,7 +391,7 @@ var jsPsychColorChangeLoc = (function (jspsych) {
       }
     }
   }
-  ColorChangeLocPlugin.info = info;
+  ImageChangeLocPlugin.info = info;
 
-  return ColorChangeLocPlugin;
+  return ImageChangeLocPlugin;
 })(jsPsychModule);
