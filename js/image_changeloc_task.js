@@ -115,10 +115,10 @@ var changeloc_instructions = {
   
 
 var trial = {
-    type: jsPsychImageChangeLoc,
+    type: jsPsychChangeLoc,
         fixation_duration: jsPsych.timelineVariable("fixation_duration"),
-        n_stimuli: jsPsych.timelineVariable("n_stimuli"),
-        images: jsPsych.timelineVariable("images"),
+        set_size: jsPsych.timelineVariable("set_size"),
+        stimuli: jsPsych.timelineVariable("stimuli"),
         stim_duration: jsPsych.timelineVariable("stim_duration"),
         delay_duration: jsPsych.timelineVariable("delay_duration"),
 
@@ -126,21 +126,23 @@ var trial = {
 };
 
 var images = [
-  "stim/0.png",
-  "stim/45.png",
-  "stim/90.png",
-  "stim/135.png",
-  "stim/180.png",
-  "stim/225.png",
-  "stim/270.png",
-  "stim/315.png",
+  "./stim/0.png",
+  "./stim/45.png",
+  "./stim/90.png",
+  "./stim/135.png",
+  "./stim/180.png",
+  "./stim/225.png",
+  "./stim/270.png",
+  "./stim/315.png",
 ];
+
+
 
 var test_procedure = {
     timeline: [trial],
     timeline_variables: [{fixation_duration: 1000,
-                        n_stimuli: 4,
-                        images: images,
+                        set_size: 4,
+                        stimuli: images,
                         stim_duration: 250,
                         delay_duration: 4000}],
     repetitions: 60,
@@ -153,8 +155,14 @@ var end_trial = {
     choices: "NO_KEYS",
   };
 
+  var preload = {
+    type: jsPsychPreload,
+    images: images,
+  };
+
 
 var timeline = [];
+timeline.push(preload)
 
 // timeline.push(pavlovia_init);
 // timeline.push(preload);
