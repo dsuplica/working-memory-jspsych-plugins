@@ -54,7 +54,7 @@ var jsPsychChangeLoc = (function (jspsych) {
 
       /** Stimuli which can appear. Either hex colors or paths to images */
       stimuli: {
-        type: jspsych.ParameterType.STRING,
+        type: jspsych.ParameterType.OBJECT,
         pretty_name: "Stimuli",
         default: [
           "#c9281c",
@@ -67,6 +67,22 @@ var jsPsychChangeLoc = (function (jspsych) {
           "#FFFFFF",
         ],
       },
+
+      /** Stimuli to present in the trial (overrides random selection) */
+      stim_manual: {
+        type: jspsych.ParameterType.OBJECT,
+        pretty_name: "Manually set stimuli",
+        default: [],
+      },
+
+      /** Locations to present stimuli at during the trial (overrides random selection) */
+
+      pos_manual: {
+        type: jspsych.ParameterType.OBJECT,
+        pretty_name: "Manually set positions",
+        default: [],
+      },
+
       /** The duration of the stimulus display */
       stim_duration: {
         type: jspsych.ParameterType.INT,
@@ -157,6 +173,18 @@ var jsPsychChangeLoc = (function (jspsych) {
 
     trial(display_element, trial) {
 
+      // CHECKS IF OVERRIDES ARE SET and set set_size appropriately if so
+
+      if (trial.stim_manual.length > 0 && trial.pos_manual.length > 0 && trial.stim_manual.length !== trial.pos_manual.length) {
+        throw new Error("Stimulus array length does not match set size");
+      }else if (trial.stim_manual.length > 0) {
+          trial.set_size = trial.stim_manual.length;
+      }else if (trial.pos_manual.length > 0) {
+          trial.set_size = trial.pos_manual.length;
+      }
+
+      // VARIABLE HARDCODING. TODO: make these trial parameters
+
       let test_index; // index of item to be changed
       let test_item; // new value for changed item
       let response_array = range(1, trial.set_size + 1); // array of possible responses
@@ -215,30 +243,38 @@ var jsPsychChangeLoc = (function (jspsych) {
 
       let position_array = [];
 
-      const stim_diag = Math.sqrt(2) * stim_size; // diagonal distance
-
-      position_loop:
-      while (position_array.length < trial.set_size) {
-        let x = randomInt(edge_buffer, canvasSize - edge_buffer);
-        let y = randomInt(edge_buffer, canvasSize - edge_buffer);
-        let x2;
-        let y2;
-    
-        if (dist_between_points(x, y, 0, 0) < stim_diag * 3 + stim_buffer) {
-            continue position_loop; // too close to center
+      // if manual positions are set, use those
+      if (trial.pos_manual.length > 0) {
+        for (let i = 0; i < trial.set_size; i++) {
+          position_array.push(trial.pos_manual[i]);
         }
-        
-        if (position_array.length > 0) {
-          for ([x2,y2] of position_array) {
-              if (dist_between_points(x, y, x2, y2) < stim_diag * 2 + stim_buffer) {
-                  continue position_loop; // too close to another stimulus
+      }else{
+
+        const stim_diag = Math.sqrt(2) * stim_size; // diagonal distance
+
+        position_loop:
+        while (position_array.length < trial.set_size) {
+          let x = randomInt(edge_buffer, canvasSize - edge_buffer);
+          let y = randomInt(edge_buffer, canvasSize - edge_buffer);
+          let x2;
+          let y2;
+      
+          if (dist_between_points(x, y, 0, 0) < stim_diag * 3 + stim_buffer) {
+              continue position_loop; // too close to center
+          }
+          
+          if (position_array.length > 0) {
+            for ([x2,y2] of position_array) {
+                if (dist_between_points(x, y, x2, y2) < stim_diag * 2 + stim_buffer) {
+                    continue position_loop; // too close to another stimulus
+                }
               }
-            }
-        }
-        
+          }
+          
 
-        // Add the position to the array if it passes the check
-        position_array.push([x, y]);
+          // Add the position to the array if it passes the check
+          position_array.push([x, y]);
+      }
     }
 
 
@@ -246,8 +282,17 @@ var jsPsychChangeLoc = (function (jspsych) {
 
     let stimulus_array = [];
     let stims_shuff = shuffleArray(trial.stimuli);
-    for (let i = 0; i < trial.set_size; i++) { // append stimuli (should be already shuffled)
-      stimulus_array.push({stimulus: stims_shuff[i], type: "stim"});
+
+
+    // if manual stimuli are set, use those
+    if (trial.stim_manual.length > 0) {
+      for (let i = 0; i < trial.set_size; i++) {
+        stimulus_array.push({stimulus: trial.stim_manual[i], type: "stim"});
+      }
+    } else {
+      for (let i = 0; i < trial.set_size; i++) { // append stimuli (should be already shuffled)
+        stimulus_array.push({stimulus: stims_shuff[i], type: "stim"});
+      }
     }
 
 
@@ -279,7 +324,7 @@ var jsPsychChangeLoc = (function (jspsych) {
             var label_object = new fabric.Text(label.toString(), {
               left: pos[0] - stim_size / 4, // shift to convert from center to left and top
               top: pos[1] - stim_size / 2,
-              fill: "#FFFFFF",
+              fill: "#9E9E9E",
               fontSize: 30,
               fontWeight: "bold",
               hasBorders: false,
@@ -318,7 +363,7 @@ var jsPsychChangeLoc = (function (jspsych) {
             var label_object = new fabric.Text(label.toString(), {
               left: pos[0] - stim_size / 4, // shift to convert from center to left and top
               top: pos[1] - stim_size / 2,
-              fill: "#9897A9",
+              fill: "#FFFFFF",
               fontSize: 30,
               fontWeight: "bold",
               hasBorders: false,
@@ -355,6 +400,10 @@ var jsPsychChangeLoc = (function (jspsych) {
       for (var i = 0; i < stimulus_array.length; i++) {
         // replace test stim with a new one
         if (i === test_index) {
+          if (trial.stim_manual.length > 0) {
+            test_item = trial.stimuli.filter(x => !trial.stim_manual.includes(x))[0]; // populate with a unique value from stimuli
+            draw_stim(test_item, position_array[i], response_array[i]);
+          }
           test_item = stims_shuff[trial.set_size + 1];
           draw_stim(test_item, position_array[i], response_array[i]);
         } else {
