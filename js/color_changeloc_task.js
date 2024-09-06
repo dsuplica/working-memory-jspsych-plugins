@@ -115,10 +115,10 @@ var changeloc_instructions = {
   
 
 var trial = {
-    type: jsPsychColorChangeLoc,
+    type: jsPsychChangeLoc,
         fixation_duration: jsPsych.timelineVariable("fixation_duration"),
-        n_colors: jsPsych.timelineVariable("n_colors"),
-        colors: jsPsych.timelineVariable("colors"),
+        set_size: jsPsych.timelineVariable("set_size"),
+        stimuli: jsPsych.timelineVariable("stimuli"),
         stim_duration: jsPsych.timelineVariable("stim_duration"),
         delay_duration: jsPsych.timelineVariable("delay_duration"),
 
@@ -139,8 +139,8 @@ colors = [
 var test_procedure = {
     timeline: [trial],
     timeline_variables: [{fixation_duration: 1000,
-                        n_colors: 6,
-                        colors: colors,
+                        set_size: 6,
+                        setimuli: colors,
                         stim_duration: 250,
                         delay_duration: 4000}],
     repetitions: 60,

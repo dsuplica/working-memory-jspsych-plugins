@@ -336,7 +336,7 @@ var jsPsychChangeLoc = (function (jspsych) {
 
     const draw_stim = async (stimulus, pos, label) => {
       let pattern = /^#/;
-      let is_color = pattern.test(color); //SEARCH FOR '#' IN STIMULUS ARGUMENT TO CONFIRM STIMULUS IS A COLOR//
+      let is_color = pattern.test(stimulus); //SEARCH FOR '#' IN STIMULUS ARGUMENT TO CONFIRM STIMULUS IS A COLOR//
       if (is_color) {
         draw_colored_square(stimulus, pos, label);
       } else {
