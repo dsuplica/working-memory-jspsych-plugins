@@ -318,7 +318,7 @@ var jsPsychChangeLoc = (function (jspsych) {
             var label_object = new fabric.Text(label.toString(), {
               left: pos[0] - stim_size / 4, // shift to convert from center to left and top
               top: pos[1] - stim_size / 2,
-              fill: "#FFFFFF",
+              fill: "#9897A9",
               fontSize: 30,
               fontWeight: "bold",
               hasBorders: false,
