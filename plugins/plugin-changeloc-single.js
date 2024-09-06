@@ -279,7 +279,7 @@ var jsPsychChangeLoc = (function (jspsych) {
             var label_object = new fabric.Text(label.toString(), {
               left: pos[0] - stim_size / 4, // shift to convert from center to left and top
               top: pos[1] - stim_size / 2,
-              fill: "#9897A9",
+              fill: "#FFFFFF",
               fontSize: 30,
               fontWeight: "bold",
               hasBorders: false,
@@ -296,11 +296,9 @@ var jsPsychChangeLoc = (function (jspsych) {
     };
 
     const draw_image = (image, pos, label) => {
-      return new Promise(async (resolve, reject) => {
-
-        var img = new fabric.Image.fromURL(image, function(img) {
+      return new Promise((resolve, reject) => {
+        fabric.Image.fromURL(image, function(img) {
           img.set({
-
             left: pos[0] - stim_size / 2, // shift to convert from center to left and top
             top: pos[1] - stim_size / 2,
             hasBorders: false,
@@ -312,41 +310,40 @@ var jsPsychChangeLoc = (function (jspsych) {
           img.scaleToWidth(stim_size);
           img.scaleToHeight(stim_size);
           canvas.add(img);
-          canvas.requestRenderAll()
-
-        });
-        resolve();
-        if (label) {
-          //ADD NUMBER LABEL//
-          var label_object = new fabric.Text(label.toString(), {
-            left: pos[0] - stim_size / 4, // shift to convert from center to left and top
-            top: pos[1] - stim_size / 2,
-            fill: "#9897A9",
-            fontSize: 30,
-            fontWeight: "bold",
-            hasBorders: false,
-            hasControls: false,
-            hoverCursor: "default",
-            lockMovementX: true,
-            lockMovementY: true,
-          });
-          canvas.add(label_object);
           canvas.requestRenderAll();
+    
+          if (label) {
+    
+            // ADD NUMBER LABEL
+            var label_object = new fabric.Text(label.toString(), {
+              left: pos[0] - stim_size / 4, // shift to convert from center to left and top
+              top: pos[1] - stim_size / 2,
+              fill: "#FFFFFF",
+              fontSize: 30,
+              fontWeight: "bold",
+              hasBorders: false,
+              hasControls: false,
+              hoverCursor: "default",
+              lockMovementX: true,
+              lockMovementY: true,
+            });
+            canvas.add(label_object);
+            canvas.requestRenderAll();
+          }
+    
           resolve();
-        }
-
+        });
       });
     };
 
     const draw_stim = async (stimulus, pos, label) => {
       let pattern = /^#/;
-      let is_color = pattern.test(stimulus); //SEARCH FOR '#' IN STIMULUS ARGUMENT TO CONFIRM STIMULUS IS A COLOR//
+      let is_color = pattern.test(stimulus); // SEARCH FOR '#' IN STIMULUS ARGUMENT TO CONFIRM STIMULUS IS A COLOR
       if (is_color) {
-        draw_colored_square(stimulus, pos, label);
+        await draw_colored_square(stimulus, pos, label);
       } else {
-        draw_image(stimulus, pos, label);
+        await draw_image(stimulus, pos, label);
       }
-
     };
 
     const present_test = async () => {
