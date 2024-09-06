@@ -31,11 +31,11 @@ function shuffleArray(arr){
 
 
 // code is based on Temilade Adekoya's plugin-ChangeLoc plugin
-var jsPsychImageChangeLoc = (function (jspsych) {
+var jsPsychChangeLoc = (function (jspsych) {
   "use strict";
   
   const info = {
-    name: "ImageChangeLocalizationPlugin",
+    name: "ChangeLocalizationPlugin",
     version: "1.0.0", // When working in a Javascript environment with no build, you will need to manually put set the version information. This is used for metadata purposes and publishing.
     parameters: {
 
@@ -45,26 +45,26 @@ var jsPsychImageChangeLoc = (function (jspsych) {
         default: 1000,
         pretty_name: "Fixation duration",
       },
-      /** The number of TOTAL images to show in the stimulus display*/
-      n_images: {
+      /** The number of TOTAL stimuli to show in the stimulus display*/
+      set_size: {
         type: jspsych.ParameterType.INT,
         default: 6,
-        pretty_name: "Number of Images",
+        pretty_name: "Number of stimuli",
       },
 
-      /**Paths to the images which can appear in this trial */
-      images: {
+      /** Stimuli which can appear. Either hex colors or paths to images */
+      stimuli: {
         type: jspsych.ParameterType.STRING,
-        pretty_name: "Images",
+        pretty_name: "Stimuli",
         default: [
-          "stim/0.png",
-          "stim/45.png",
-          "stim/90.png",
-          "stim/135.png",
-          "stim/180.png",
-          "stim/225.png",
-          "stim/270.png",
-          "stim/315.png",
+          "#c9281c",
+          "#f0e10c",
+          "#158009",
+          "#062a9e",
+          "#00FFFF",
+          "#FF00FF",
+          "#000000",
+          "#FFFFFF",
         ],
       },
       /** The duration of the stimulus display */
@@ -100,12 +100,12 @@ var jsPsychImageChangeLoc = (function (jspsych) {
         type: jspsych.ParameterType.INT,
       },
 
-      /** Images presented */
+      /** Stims presented */
       stimuli: {
         type: jspsych.ParameterType.OBJECT,
       },
 
-      /** Image positions */
+      /** Stim positions */
       positions: {
         type: jspsych.ParameterType.OBJECT,
       },
@@ -127,7 +127,7 @@ var jsPsychImageChangeLoc = (function (jspsych) {
         type: jspsych.ParameterType.OBJECT,
         default: [],
       },
-      /** Number of images */
+      /** Number of stimuli */
       set_size: {
         type: jspsych.ParameterType.INT,
       },
@@ -140,16 +140,16 @@ var jsPsychImageChangeLoc = (function (jspsych) {
 
   
   /**
-   * **{plugin-image-changeloc}**
+   * **{plugin-changeloc-single}**
    *
-   * A plugin to run image change localization experiments of varying set sizes
-   * Useful for orientation or shape trials
+   * A plugin to run change localization experiments of varying set sizes
    * Display stimuli simultaneously, then test on a array of the same with one changed
+   * Can run with colors or images
    *
    * @author Darius Suplica
    * @see {@link {https://github.com/dsuplica/change-localization-jspsych-plugins}}
    */
-  class ImageChangeLocPlugin {
+  class ChangeLocPlugin {
     constructor(jsPsych) {
       this.jsPsych = jsPsych;
     }
@@ -241,26 +241,68 @@ var jsPsychImageChangeLoc = (function (jspsych) {
         position_array.push([x, y]);
     }
 
+
     // CREATE STIMULI
 
     let stimulus_array = [];
-    let images_shuff = shuffleArray(trial.images);
+    let stims_shuff = shuffleArray(trial.stimuli);
     for (let i = 0; i < trial.set_size; i++) { // append stimuli (should be already shuffled)
-      stimulus_array.push({stimulus: images_shuff[i], type: "image"});
+      stimulus_array.push({stimulus: stims_shuff[i], type: "stim"});
     }
 
 
     
 
     // drawing functions, basically straight copy paste
-    const draw_stim = (stimulus, pos, label) => {
+
+
+    const draw_colored_square = (color, pos, label) => {
+
+      return new Promise(async (resolve, reject) => {
+          var rect = new fabric.Rect({
+            width: stim_size,
+            height: stim_size,
+            left: pos[0] - stim_size / 2, // shift to convert from center to left and top
+            top: pos[1] - stim_size / 2,
+            fill: color,
+            hasBorders: false,
+            hasControls: false,
+            hoverCursor: "default",
+            lockMovementX: true,
+            lockMovementY: true,
+          });
+          canvas.add(rect);
+          canvas.requestRenderAll();
+          resolve();
+          if (label) {
+            //ADD NUMBER LABEL//
+            var label_object = new fabric.Text(label.toString(), {
+              left: pos[0] - stim_size / 4, // shift to convert from center to left and top
+              top: pos[1] - stim_size / 2,
+              fill: "#9897A9",
+              fontSize: 30,
+              fontWeight: "bold",
+              hasBorders: false,
+              hasControls: false,
+              hoverCursor: "default",
+              lockMovementX: true,
+              lockMovementY: true,
+            });
+            canvas.add(label_object);
+            canvas.requestRenderAll();
+            resolve();
+        }
+      });
+    };
+
+    const draw_image = (image, pos, label) => {
       return new Promise(async (resolve, reject) => {
         var img = new fabric.Image.fromURL({
           width: stim_size,
           height: stim_size,
           left: pos[0] - stim_size / 2, // shift to convert from center to left and top
           top: pos[1] - stim_size / 2,
-          fill: stimulus,
+          fill: image,
           hasBorders: false,
           hasControls: false,
           hoverCursor: "default",
@@ -292,6 +334,17 @@ var jsPsychImageChangeLoc = (function (jspsych) {
       });
     };
 
+    const draw_stim = async (stimulus, pos, label) => {
+      let pattern = /^#/;
+      let is_color = pattern.test(color); //SEARCH FOR '#' IN STIMULUS ARGUMENT TO CONFIRM STIMULUS IS A COLOR//
+      if (is_color) {
+        draw_colored_square(stimulus, pos, label);
+      } else {
+        draw_image(stimulus, pos, label);
+      }
+
+    };
+
     const present_test = async () => {
       //CREATE ARRAY OF DESIRED RESPONSES & SHUFFLE//
       response_array = shuffleArray(response_array);
@@ -301,7 +354,7 @@ var jsPsychImageChangeLoc = (function (jspsych) {
       for (var i = 0; i < stimulus_array.length; i++) {
         // replace test stim with a new one
         if (i === test_index) {
-          test_item = images_shuff[trial.set_size + 1];
+          test_item = stims_shuff[trial.set_size + 1];
           draw_stim(test_item, position_array[i], response_array[i]);
         } else {
           draw_stim(
@@ -371,7 +424,7 @@ var jsPsychImageChangeLoc = (function (jspsych) {
         // let accuracy = jsPsych.pluginAPI.compareKeys(key, String(response_array[test_index]));
         let accuracy = key === String(response_array[test_index]);
         var trial_data = {
-          trial_exp: "image_change_localization",
+          trial_exp: "change_localization",
           key: key,
           rt: rt,
           stimuli: stimulus_array,
@@ -391,7 +444,7 @@ var jsPsychImageChangeLoc = (function (jspsych) {
       }
     }
   }
-  ImageChangeLocPlugin.info = info;
+  ChangeLocPlugin.info = info;
 
-  return ImageChangeLocPlugin;
+  return ChangeLocPlugin;
 })(jsPsychModule);
