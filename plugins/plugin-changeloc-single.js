@@ -297,20 +297,24 @@ var jsPsychChangeLoc = (function (jspsych) {
 
     const draw_image = (image, pos, label) => {
       return new Promise(async (resolve, reject) => {
-        var img = new fabric.Image.fromURL({
-          width: stim_size,
-          height: stim_size,
-          left: pos[0] - stim_size / 2, // shift to convert from center to left and top
-          top: pos[1] - stim_size / 2,
-          fill: image,
-          hasBorders: false,
-          hasControls: false,
-          hoverCursor: "default",
-          lockMovementX: true,
-          lockMovementY: true,
+
+        var img = new fabric.Image.fromURL(image, function(img) {
+          img.set({
+
+            left: pos[0] - stim_size / 2, // shift to convert from center to left and top
+            top: pos[1] - stim_size / 2,
+            hasBorders: false,
+            hasControls: false,
+            hoverCursor: "default",
+            lockMovementX: true,
+            lockMovementY: true,
+          });
+          img.scaleToWidth(stim_size);
+          img.scaleToHeight(stim_size);
+          canvas.add(img);
+          canvas.requestRenderAll()
+
         });
-        canvas.add(img);
-        canvas.requestRenderAll();
         resolve();
         if (label) {
           //ADD NUMBER LABEL//
@@ -363,7 +367,6 @@ var jsPsychChangeLoc = (function (jspsych) {
             response_array[i]
           );
         }
-        canvas.requestRenderAll();
       }
 
       // event listener
