@@ -671,19 +671,23 @@ var jsPsychChangeLocDual = (function (jspsych) {
 
         // delay
 
-        
+
+
+
 
 
 
 
       }
 
+      
+
 
 
 
 
       function afterResponse(info) {
-        end_trial(info.key, info.rt)
+        return info.key,info.rt
       }
       const end_trial = (key, rt) => {
 
