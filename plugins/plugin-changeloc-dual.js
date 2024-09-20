@@ -649,6 +649,36 @@ var jsPsychChangeLocDual = (function (jspsych) {
 
       // MAIN TRIAL PROCEDURE HERE
 
+      const trial_procedure = async () => {
+        show_fixation();
+
+        // stim 1 
+        await present_stimuli(
+          stimulus_array_1,
+          position_array_1,
+          trial.fixation_duration,
+          trial.stim_duration_1
+        );
+
+        // stim 2
+        
+        await present_stimuli(
+          stimulus_array_2,
+          position_array_2,
+          trial.isi,
+          trial.stim_duration_2
+        );
+
+        // delay
+
+        
+
+
+
+
+      }
+
+
 
 
 
