@@ -597,23 +597,43 @@ var jsPsychChangeLocDual = (function (jspsych) {
         // get index of test item
         test_index = randomInt(0, stimulus_array.length);
 
-        for (var i = 0; i < stimulus_array.length; i++) {
+        for (let istim = 0; istim < stimulus_array.length; istim++) {
           // replace test stim with a new one
-          if (i === test_index) {
+          if (istim === test_index) {
             if (trial.stim_manual.length > 0) {
               test_item = trial.stimuli.filter(x => !trial.stim_manual.includes(x))[0]; // populate with a unique value from stimuli
-              draw_stim(test_item, position_array[i], response_array[i]);
+              draw_stim(test_item, position_array[istim], response_array[istim]);
+            }else{
+              test_item = stims_shuff[trial.set_size + 1];
             }
-            test_item = stims_shuff[trial.set_size + 1];
-            draw_stim(test_item, position_array[i], response_array[i]);
+            draw_stim(test_item, position_array[istim], response_array[istim]);
           } else {
             draw_stim(
-              stimulus_array[i].stimulus,
-              position_array[i],
-              response_array[i]
+              stimulus_array[istim].stimulus,
+              position_array[istim],
+              response_array[istim]
             );
           }
         }
+
+        const present_stimuli = async (stimulus_array, position_array,delay,duration) => {
+
+          this.jsPsych.pluginAPI.setTimeout(async function () {
+            for (let istim = 0; istim < stimulus_array.length; istim++) {
+              await draw_stim(stimulus_array[istim].stimulus, position_array[istim]);
+            }
+            this.jsPsych.pluginAPI.setTimeout(function () {
+              canvas.getObjects().forEach((o) => {
+                if (!o.id) {
+                  canvas.remove(o);
+                }
+              });
+              canvas.requestRenderAll();
+            },
+              duration);
+          },
+          delay);
+        };
 
         // event listener
         // idk what this does tbh
@@ -629,38 +649,8 @@ var jsPsychChangeLocDual = (function (jspsych) {
 
       // MAIN TRIAL PROCEDURE HERE
 
-      const trial_procedure = async () => {
 
 
-        // present initial stimulus array
-        for (let istim = 0; istim < stimulus_array.length; istim++) {
-          await draw_stim(stimulus_array[istim].stimulus, position_array[istim]);
-        }
-
-        // present delay period and then test
-        // i should be an honorary italian
-        // this is straight spaghetti i hate it
-        this.jsPsych.pluginAPI.setTimeout(function () {
-          // function to remove objects, executed at end of stim period
-          canvas.getObjects().forEach((o) => {
-            if (!o.id) {
-              canvas.remove(o);
-            }
-          });
-          canvas.requestRenderAll();
-          this.jsPsych.pluginAPI.setTimeout(function () {
-            present_test();
-          }, trial.delay_duration); // delay period, executed at end
-        }, trial.stim_duration);
-      };
-
-      // actually run the trial here
-      show_fixation();
-
-      this.jsPsych.pluginAPI.setTimeout(function () {
-        //INTERTRIAL INTERVAL//
-        trial_procedure();
-      }, trial.fixation_duration);
 
       function afterResponse(info) {
         end_trial(info.key, info.rt)
