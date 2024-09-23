@@ -164,7 +164,7 @@ var jsPsychChangeLocDual = (function (jspsych) {
       /** the order in which to probe each set */
       probe_order: {
         type: jspsych.ParameterType.OBJECT,
-        default: [0, 1],
+        default: [1,2],
         pretty_name: "Probe order",
       },
       /** The delay between probes */
@@ -591,59 +591,54 @@ var jsPsychChangeLocDual = (function (jspsych) {
         }
       };
 
-      const present_test = async (stimulus_array,position_array,response_array) => {
+
+      const present_test = async (stimulus_array,position_array,response_array,all_stimuli,delay) => {
         //CREATE ARRAY OF DESIRED RESPONSES & SHUFFLE//
         response_array = shuffleArray(response_array);
         // get index of test item
         test_index = randomInt(0, stimulus_array.length);
 
-        for (let istim = 0; istim < stimulus_array.length; istim++) {
-          // replace test stim with a new one
-          if (istim === test_index) {
-            if (trial.stim_manual.length > 0) {
-              test_item = trial.stimuli.filter(x => !trial.stim_manual.includes(x))[0]; // populate with a unique value from stimuli
-              draw_stim(test_item, position_array[istim], response_array[istim]);
-            }else{
-              test_item = stims_shuff[trial.set_size + 1];
-            }
-            draw_stim(test_item, position_array[istim], response_array[istim]);
-          } else {
-            draw_stim(
-              stimulus_array[istim].stimulus,
-              position_array[istim],
-              response_array[istim]
-            );
+
+        test_item = all_stimuli.filter(x => !stimulus_array.includes(x))[0]; // populate with a unique value from stimuli
+
+        stimulus_array[test_index].stimulus = test_item;
+
+        // show the initial array after waiting the delay before
+
+        
+        this.jspsych.pluginAPI.setTimeout(async function () {
+          for (let istim = 0; istim < stimulus_array.length; istim++) { // show stimuli with response
+            await draw_stim(stimulus_array[istim].stimulus, position_array[istim]);
           }
-        }
 
-        const present_stimuli = async (stimulus_array, position_array,delay,duration) => {
-
-          this.jsPsych.pluginAPI.setTimeout(async function () {
+          this.jspsych.pluginAPI.setTimeout(async function () { // draw with numbers
             for (let istim = 0; istim < stimulus_array.length; istim++) {
-              await draw_stim(stimulus_array[istim].stimulus, position_array[istim]);
+              await draw_stim(stimulus_array[istim].stimulus, position_array[istim], response_array[istim]);
             }
-            this.jsPsych.pluginAPI.setTimeout(function () {
-              canvas.getObjects().forEach((o) => {
-                if (!o.id) {
-                  canvas.remove(o);
-                }
-              });
-              canvas.requestRenderAll();
-            },
-              duration);
-          },
-          delay);
-        };
+          },0.1);
+        },delay);
+        return test_index
+      }
 
-        // event listener
-        // idk what this does tbh
-        var keyboard_listener = jsPsych.pluginAPI.getKeyboardResponse({
-          callback_function: afterResponse,
-          valid_responses: valid_responses,
-          rt_method: "performance",
-          persist: false,
-          allow_held_key: false,
-        });
+
+
+      const present_stimuli = async (stimulus_array, position_array,delay,duration) => {
+
+        this.jsPsych.pluginAPI.setTimeout(async function () {
+          for (let istim = 0; istim < stimulus_array.length; istim++) { // show stimuli with response
+            await draw_stim(stimulus_array[istim].stimulus, position_array[istim]);
+          }
+          this.jsPsych.pluginAPI.setTimeout(function () { // clear screen
+            canvas.getObjects().forEach((o) => {
+              if (!o.id) {
+                canvas.remove(o);
+              }
+            });
+            canvas.requestRenderAll();
+          },
+            duration);
+        },
+        delay);
       };
 
 
@@ -669,7 +664,46 @@ var jsPsychChangeLocDual = (function (jspsych) {
           trial.stim_duration_2
         );
 
-        // delay
+        // delay and first test
+
+        // TODO: fix  order
+
+        test_index_1 = await present_test(
+          stimulus_array_1,
+          position_array_1,
+          response_array_1,
+          trial.stimuli_1,
+          trial.delay_duration
+        );
+
+        var keyboard_listener = jsPsych.pluginAPI.getKeyboardResponse({
+          callback_function: function (info) {
+            var key_1 = info.key
+            var rt_1 = info.rt
+
+
+
+            test_index_2 = present_test(
+              stimulus_array_2,
+              position_array_2,
+              response_array_2,
+              trial.stimuli_2,
+              trial.probe_delay
+            );
+
+            
+            },
+          valid_responses: response_array,
+          rt_method: "performance",
+          persist: false,
+          allow_held_key: false,
+        });
+
+
+
+        
+
+
 
 
 
@@ -689,7 +723,7 @@ var jsPsychChangeLocDual = (function (jspsych) {
       function afterResponse(info) {
         return info.key,info.rt
       }
-      const end_trial = (key, rt) => {
+      const end_trial = (key_1, rt_1,key_2,rt_2) => {
 
         // remove event listeners
         $(document).unbind();
