@@ -434,11 +434,11 @@ var jsPsychChangeLocDual = (function (jsPsych) {
       // if manual stimuli are set, use those
       if (trial.stim_manual_1.length > 0) {
         for (let i = 0; i < trial.set_size_1; i++) {
-          stimulus_array_1.push({ stimulus: trial.stim_manual_1[i], type: "stim" });
+          stimulus_array_1.push(trial.stim_manual_1[i]);
         }
       } else {
         for (let i = 0; i < trial.set_size_1; i++) { // append stimuli (should be already shuffled)
-          stimulus_array_1.push({ stimulus: stims_shuff_1[i], type: "stim" });
+          stimulus_array_1.push(stims_shuff_1[i]);
         }
       }
 
@@ -487,11 +487,11 @@ var jsPsychChangeLocDual = (function (jsPsych) {
       // if manual stimuli are set, use those
       if (trial.stim_manual_2.length > 0) {
         for (let i = 0; i < trial.set_size_2; i++) {
-          stimulus_array_2.push({ stimulus: trial.stim_manual_2[i], type: "stim" });
+          stimulus_array_2.push(trial.stim_manual_2[i]);
         }
       } else {
         for (let i = 0; i < trial.set_size_2; i++) { // append stimuli (should be already shuffled)
-          stimulus_array_2.push({ stimulus: stims_shuff_2[i], type: "stim" });
+          stimulus_array_2.push(stims_shuff_2[i]);
         }
       }
 
@@ -611,19 +611,19 @@ var jsPsychChangeLocDual = (function (jsPsych) {
 
         let test_item = all_stimuli.filter(x => !stimulus_array.includes(x))[0]; // populate with a unique value from stimuli
 
-        stimulus_array[test_index].stimulus = test_item;
+        stimulus_array[test_index] = test_item;
 
         // show the initial array after waiting the delay before
 
         
         this.jsPsych.pluginAPI.setTimeout(async function () {
           for (let istim = 0; istim < stimulus_array.length; istim++) { // show stimuli with response
-            await draw_stim(stimulus_array[istim].stimulus, position_array[istim]);
+            await draw_stim(stimulus_array[istim], position_array[istim]);
           }
 
           this.jsPsych.pluginAPI.setTimeout(async function () { // draw with numbers
             for (let istim = 0; istim < stimulus_array.length; istim++) {
-              await draw_stim(stimulus_array[istim].stimulus, position_array[istim], response_array[istim]);
+              await draw_stim(stimulus_array[istim], position_array[istim], response_array[istim]);
             }
           },100);
         },delay);
@@ -639,7 +639,7 @@ var jsPsychChangeLocDual = (function (jsPsych) {
 
         this.jsPsych.pluginAPI.setTimeout(async function () {
           for (let istim = 0; istim < stimulus_array.length; istim++) { // show stimuli with response
-            await draw_stim(stimulus_array[istim].stimulus, position_array[istim]);
+            await draw_stim(stimulus_array[istim], position_array[istim]);
           }
           this.jsPsych.pluginAPI.setTimeout(function () { // clear screen
             clear_screen();
@@ -723,7 +723,7 @@ var jsPsychChangeLocDual = (function (jsPsych) {
           trial.delay_duration
         );
 
-        trial_data[probe_ix].test_item = trial_data[probe_ix].stimulus_array[trial_data[probe_ix].test_index].stimulus;
+        trial_data[probe_ix].test_item = trial_data[probe_ix].stimulus_array[trial_data[probe_ix].test_index];
 
 
 
@@ -749,7 +749,7 @@ var jsPsychChangeLocDual = (function (jsPsych) {
               trial_data[probe_ix].valid_stimuli,
               trial.delay_duration
             );
-            trial_data[probe_ix].test_item = trial_data[probe_ix].stimulus_array[trial_data[probe_ix].test_index].stimulus;
+            trial_data[probe_ix].test_item = trial_data[probe_ix].stimulus_array[trial_data[probe_ix].test_index];
 
 
             // second keyboard response here (sorry for ugly)
