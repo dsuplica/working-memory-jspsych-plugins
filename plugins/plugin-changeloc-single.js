@@ -196,7 +196,7 @@ var jsPsychChangeLoc = (function (jspsych) {
       const valid_responses = response_array.map(String); // array of valid responses
       const canvasSize = 600;
       const edge_buffer = 100;
-      const stim_buffer = 10; 
+      const stim_buffer = 50; 
       const stim_size = 40;
 
 

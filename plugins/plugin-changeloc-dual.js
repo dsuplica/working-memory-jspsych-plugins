@@ -340,7 +340,7 @@ var jsPsychChangeLocDual = (function (jsPsych) {
       const valid_responses_2 = response_array_2.map(String); 
       const canvasSize = 600;
       const edge_buffer = 100;
-      const stim_buffer = 10;
+      const stim_buffer = 50;
       const stim_size = 40;
 
 
