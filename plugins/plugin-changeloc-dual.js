@@ -300,7 +300,7 @@ var jsPsychChangeLocDual = (function (jspsych) {
    * @author Darius Suplica
    * @see {@link {https://github.com/dsuplica/change-localization-jspsych-plugins}}
    */
-  class ChangeLocPlugin {
+  class DualChangeLocPlugin {
     constructor(jsPsych) {
       this.jsPsych = jsPsych;
     }
@@ -804,7 +804,7 @@ var jsPsychChangeLocDual = (function (jspsych) {
       }
     }
   }
-  ChangeLocPlugin.info = info;
+  DualChangeLocPlugin.info = info;
 
-  return ChangeLocPlugin;
+  return DualChangeLocPlugin;
 })(jsPsychModule);
