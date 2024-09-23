@@ -99,10 +99,10 @@ var jsPsych = initJsPsych();
 //   };
 
 
-var colororientationchangeloc_instruction_ordered = {
-  type: jsPsychImageKeyboardResponse,
-  choices: ["y"],
-  prompt:
+var changeloc_instructions = {
+  type: jsPsychHtmlKeyboardResponse,
+  choices: ["Y"],
+  stimulus:
     "<p>This is the last part of our study. You'll first be shown six colored sqaures and then four abstract orientations on the screen for 0.25 second. " +
     "Your task is to remember as many <b> colors and orientations</b> as possible. </p>" +
     "<p>Shortly after, four more orientations are going to be shown at the same locations the original four were shown." +

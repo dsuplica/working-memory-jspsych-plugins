@@ -35,7 +35,7 @@ function randChoice(arr){
 
 
 // code is based on Temilade Adekoya's plugin-ChangeLoc plugin
-var jsPsychChangeLocDual = (function (jspsych) {
+var jsPsychChangeLocDual = (function (jsPsych) {
   "use strict";
 
   const info = {
@@ -45,7 +45,7 @@ var jsPsychChangeLocDual = (function (jspsych) {
 
       /** The duration of INITIAL fixation prior to stimulus presentation */
       fixation_duration: {
-        type: jspsych.ParameterType.INT,
+        type: jsPsych.ParameterType.INT,
         default: 1000,
         pretty_name: "Fixation duration",
       },
@@ -53,14 +53,14 @@ var jsPsychChangeLocDual = (function (jspsych) {
 
       /** Set size for first stimulus set*/
       set_size_1: {
-        type: jspsych.ParameterType.INT,
+        type: jsPsych.ParameterType.INT,
         default: 6,
         pretty_name: "Number of stimuli",
       },
 
       /** First stimulus set */
       stimuli_1: {
-        type: jspsych.ParameterType.OBJECT,
+        type: jsPsych.ParameterType.OBJECT,
         pretty_name: "Stimuli",
         default: [
           "#c9281c",
@@ -77,7 +77,7 @@ var jsPsychChangeLocDual = (function (jspsych) {
 
       /** Stimuli to present in set 1 (overrides random selection) */
       stim_manual_1: {
-        type: jspsych.ParameterType.OBJECT,
+        type: jsPsych.ParameterType.OBJECT,
         pretty_name: "Manually set stimuli",
         default: [],
       },
@@ -85,21 +85,21 @@ var jsPsychChangeLocDual = (function (jspsych) {
       /** Locations to present stimuli at for set 1 (overrides random selection) */
 
       pos_manual_1: {
-        type: jspsych.ParameterType.OBJECT,
+        type: jsPsych.ParameterType.OBJECT,
         pretty_name: "Manually set positions",
         default: [],
       },
 
       /** The duration of the first stimulus display */
       stim_duration_1: {
-        type: jspsych.ParameterType.INT,
+        type: jsPsych.ParameterType.INT,
         default: 250,
         pretty_name: "Stimulus duration",
       },
 
       /** delay between presenting the first and second stimuli */
       isi: {
-        type: jspsych.ParameterType.INT,
+        type: jsPsych.ParameterType.INT,
         default: 500,
         pretty_name: "Interstimulus interval",
       },
@@ -108,14 +108,14 @@ var jsPsychChangeLocDual = (function (jspsych) {
 
       /** Set size for second stimulus set*/
       set_size_2: {
-        type: jspsych.ParameterType.INT,
+        type: jsPsych.ParameterType.INT,
         default: 4,
         pretty_name: "Number of stimuli",
       },
 
       /** Second stimulus set */
       stimuli_2: {
-        type: jspsych.ParameterType.OBJECT,
+        type: jsPsych.ParameterType.OBJECT,
         pretty_name: "Stimuli",
         default: [
           "stim/0.png",
@@ -132,7 +132,7 @@ var jsPsychChangeLocDual = (function (jspsych) {
 
       /** Stimuli to present in set 2 (overrides random selection) */
       stim_manual_2: {
-        type: jspsych.ParameterType.OBJECT,
+        type: jsPsych.ParameterType.OBJECT,
         pretty_name: "Manually set stimuli",
         default: [],
       },
@@ -140,14 +140,14 @@ var jsPsychChangeLocDual = (function (jspsych) {
       /** Locations to present stimuli at for set 2 (overrides random selection) */
 
       pos_manual_2: {
-        type: jspsych.ParameterType.OBJECT,
+        type: jsPsych.ParameterType.OBJECT,
         pretty_name: "Manually set positions",
         default: [],
       },
 
       /** The duration of the second stimulus display */
       stim_duration_2: {
-        type: jspsych.ParameterType.INT,
+        type: jsPsych.ParameterType.INT,
         default: 250,
         pretty_name: "Stimulus duration",
       },
@@ -156,28 +156,28 @@ var jsPsychChangeLocDual = (function (jspsych) {
       /** the duration of the delay period (ms) */
 
       delay_duration: {
-        type: jspsych.ParameterType.INT,
+        type: jsPsych.ParameterType.INT,
         default: 4000,
         pretty_name: "Delay duration",
       },
 
       /** the order in which to probe each set */
       probe_order: {
-        type: jspsych.ParameterType.OBJECT,
+        type: jsPsych.ParameterType.OBJECT,
         default: [0,1],
         pretty_name: "Probe order",
       },
       /** The delay between probes */
 
       probe_delay: {
-        type: jspsych.ParameterType.INT,
+        type: jsPsych.ParameterType.INT,
         default: 500,
         pretty_name: "Probe delay",
       },
 
       /** name of each trial */
       trial_exp: {
-        type: jspsych.ParameterType.STRING,
+        type: jsPsych.ParameterType.STRING,
         default: "change_localization_dual",
       },
 
@@ -186,104 +186,104 @@ var jsPsychChangeLocDual = (function (jspsych) {
     data: {
       /** name of this trial */
       trial_exp: {
-        type: jspsych.ParameterType.STRING,
+        type: jsPsych.ParameterType.STRING,
       },
       /** Order of test */
       probe_order: {
-        type: jspsych.ParameterType.OBJECT,
+        type: jsPsych.ParameterType.OBJECT,
       },
 
       /** Response key pressed */
       key_1: {
-        type: jspsych.ParameterType.KEY,
+        type: jsPsych.ParameterType.KEY,
       },
 
       /** Reaction Time */
       rt_1: {
-        type: jspsych.ParameterType.INT,
+        type: jsPsych.ParameterType.INT,
       },
 
       /** Stims presented */
       stimuli_1: {
-        type: jspsych.ParameterType.OBJECT,
+        type: jsPsych.ParameterType.OBJECT,
       },
 
       /** Stim positions */
       positions_1: {
-        type: jspsych.ParameterType.OBJECT,
+        type: jsPsych.ParameterType.OBJECT,
       },
 
       /** Index of the test */
       test_index_1: {
-        type: jspsych.ParameterType.INT,
+        type: jsPsych.ParameterType.INT,
       },
       /** Test item */
       test_item_1: {
-        type: jspsych.ParameterType.STRING,
+        type: jsPsych.ParameterType.STRING,
       },
       /** Correct answer */
       correct_answer_1: {
-        type: jspsych.ParameterType.STRING,
+        type: jsPsych.ParameterType.STRING,
       },
       /** Array of responses */
 
       response_array_1: {
-        type: jspsych.ParameterType.OBJECT,
+        type: jsPsych.ParameterType.OBJECT,
         default: [],
       },
       /** Number of stimuli */
       set_size_1: {
-        type: jspsych.ParameterType.INT,
+        type: jsPsych.ParameterType.INT,
       },
       /** Accuracy */
       accuracy_1: {
-        type: jspsych.ParameterType.BOOL,
+        type: jsPsych.ParameterType.BOOL,
       },
       
       /** Response key pressed */
       key_2: {
-        type: jspsych.ParameterType.KEY,
+        type: jsPsych.ParameterType.KEY,
       },
 
       /** Reaction Time */
       rt_2: {
-        type: jspsych.ParameterType.INT,
+        type: jsPsych.ParameterType.INT,
       },
 
       /** Stims presented */
       stimuli_2: {
-        type: jspsych.ParameterType.OBJECT,
+        type: jsPsych.ParameterType.OBJECT,
       },
 
       /** Stim positions */
       positions_2: {
-        type: jspsych.ParameterType.OBJECT,
+        type: jsPsych.ParameterType.OBJECT,
       },
 
       /** Index of the test */
       test_index_2: {
-        type: jspsych.ParameterType.INT,
+        type: jsPsych.ParameterType.INT,
       },
       /** Test item */
       test_item_2: {
-        type: jspsych.ParameterType.STRING,
+        type: jsPsych.ParameterType.STRING,
       },
       /** Correct answer */
       correct_answer_2: {
-        type: jspsych.ParameterType.STRING,
+        type: jsPsych.ParameterType.STRING,
       },
       /** Array of responses */
       response_array_2: {
-        type: jspsych.ParameterType.OBJECT,
+        type: jsPsych.ParameterType.OBJECT,
         default: [],
       },
       /** Number of stimuli */
       set_size_2: {
-        type: jspsych.ParameterType.INT,
+        type: jsPsych.ParameterType.INT,
       },
       /** Accuracy */
       accuracy_2: {
-        type: jspsych.ParameterType.BOOL,
+        type: jsPsych.ParameterType.BOOL,
       },
       
     }
@@ -298,7 +298,7 @@ var jsPsychChangeLocDual = (function (jspsych) {
    * Can run with colors or images
    *
    * @author Darius Suplica
-   * @see {@link {https://github.com/dsuplica/change-localization-jspsych-plugins}}
+   * @see {@link {https://github.com/dsuplica/change-localization-jsPsych-plugins}}
    */
   class DualChangeLocPlugin {
     constructor(jsPsych) {
@@ -349,12 +349,12 @@ var jsPsychChangeLocDual = (function (jspsych) {
 
       //CREATE CANVAS OBJECT//
       display_element.innerHTML =
-        "<div id='jspsych-changeloc-plugin' style='position: relative; width:" +
+        "<div id='jsPsych-changeloc-plugin' style='position: relative; width:" +
         canvasSize +
         "px; height:" +
         canvasSize +
         "px'></div>";
-      display_element.querySelector("#jspsych-changeloc-plugin").innerHTML +=
+      display_element.querySelector("#jsPsych-changeloc-plugin").innerHTML +=
         "<canvas id='c', width = '" +
         canvasSize +
         "', height = '" +
@@ -596,26 +596,26 @@ var jsPsychChangeLocDual = (function (jspsych) {
         //CREATE ARRAY OF DESIRED RESPONSES & SHUFFLE//
         response_array = shuffleArray(response_array);
         // get index of test item
-        test_index = randomInt(0, stimulus_array.length);
+        let test_index = randomInt(0, stimulus_array.length);
 
 
-        test_item = all_stimuli.filter(x => !stimulus_array.includes(x))[0]; // populate with a unique value from stimuli
+        let test_item = all_stimuli.filter(x => !stimulus_array.includes(x))[0]; // populate with a unique value from stimuli
 
         stimulus_array[test_index].stimulus = test_item;
 
         // show the initial array after waiting the delay before
 
         
-        this.jspsych.pluginAPI.setTimeout(async function () {
+        this.jsPsych.pluginAPI.setTimeout(async function () {
           for (let istim = 0; istim < stimulus_array.length; istim++) { // show stimuli with response
             await draw_stim(stimulus_array[istim].stimulus, position_array[istim]);
           }
 
-          this.jspsych.pluginAPI.setTimeout(async function () { // draw with numbers
+          this.jsPsych.pluginAPI.setTimeout(async function () { // draw with numbers
             for (let istim = 0; istim < stimulus_array.length; istim++) {
               await draw_stim(stimulus_array[istim].stimulus, position_array[istim], response_array[istim]);
             }
-          },0.1);
+          },100);
         },delay);
         return response_array,test_index
       }
@@ -623,6 +623,7 @@ var jsPsychChangeLocDual = (function (jspsych) {
 
 
       const present_stimuli = async (stimulus_array, position_array,delay,duration) => {
+        console.log("CALL")
 
         this.jsPsych.pluginAPI.setTimeout(async function () {
           for (let istim = 0; istim < stimulus_array.length; istim++) { // show stimuli with response
@@ -647,7 +648,7 @@ var jsPsychChangeLocDual = (function (jspsych) {
       const trial_procedure = async () => {
 
 
-        trial_data = [
+        var trial_data = [
           {
             stimulus_array: stimulus_array_1,
             position_array: position_array_1,
@@ -677,21 +678,23 @@ var jsPsychChangeLocDual = (function (jspsych) {
         show_fixation();
 
         // stim 1 
-        await present_stimuli(
-          trial_data[0].stimulus_array,
-          trial_data[0].position_array,
-          trial.fixation_duration,
-          trial.stim_duration_1
-        );
+        // await present_stimuli(
+        //   trial_data[0].stimulus_array,
+        //   trial_data[0].position_array,
+        //   trial.fixation_duration,
+        //   trial.stim_duration_1
+        // ).then(
+          present_stimuli(
+            trial_data[1].stimulus_array,
+            trial_data[1].position_array,
+            trial.isi,
+            trial.stim_duration_2
+          )
+        // )
 
         // stim 2
         
-        await present_stimuli(
-          trial_data[1].stimulus_array,
-          trial_data[1].position_array,
-          trial.isi,
-          trial.stim_duration_2
-        );
+
 
         // delay and first test
 
@@ -703,7 +706,7 @@ var jsPsychChangeLocDual = (function (jspsych) {
 
         // TEST THE FIRST PROBE AS SET BY PROBE ORDER
 
-        probe_ix = trial.probe_order[0];
+        var probe_ix = trial.probe_order[0];
 
         trial_data[probe_ix].response_array,trial_data[probe_ix].test_index = await present_test(
           trial_data[probe_ix].stimulus_array,
@@ -713,8 +716,11 @@ var jsPsychChangeLocDual = (function (jspsych) {
           trial.delay_duration
         );
 
-        var keyboard_listener = jsPsych.pluginAPI.getKeyboardResponse({
+        console.log("PASSED TEST PRESENTATION")
+
+        var keyboard_listener = this.jsPsych.pluginAPI.getKeyboardResponse({
           callback_function: async function (info) {
+            console.log("GOT RESPONSE")
 
             trial_data[probe_ix].key = info.key
             trial_data[probe_ix].rt = info.rt
@@ -736,7 +742,7 @@ var jsPsychChangeLocDual = (function (jspsych) {
             );
 
             // second keyboard response here (sorry for ugly)
-            var keyboard_listener = jsPsych.pluginAPI.getKeyboardResponse({
+            var keyboard_listener_2 = this.jsPsych.pluginAPI.getKeyboardResponse({
               callback_function: async function (info) {
                 trial_data[probe_ix].key = info.key
                 trial_data[probe_ix].rt = info.rt
@@ -760,6 +766,7 @@ var jsPsychChangeLocDual = (function (jspsych) {
         });
       }
 
+      trial_procedure();
       
 
 
