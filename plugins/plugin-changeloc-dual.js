@@ -774,7 +774,7 @@ var jsPsychChangeLocDual = (function (jspsych) {
 
         // save data into trial_data
         var trial_data = {
-          trial_exp: "change_localization_dual",
+          trial_exp: trial.trial_exp,
           set_size_1: trial.set_size_1,
           stimuli_1: input_data[0].stimulus_array,
           positions_1: input_data[0].position_array,
