@@ -150,7 +150,12 @@ var jsPsychChangeLoc = (function (jspsych) {
       /** Accuracy */
       accuracy: {
         type: jspsych.ParameterType.BOOL,
-      }
+      },
+      /** Name of trial */
+      trial_exp: {
+        type: jspsych.ParameterType.STRING,
+        default: "change_localization",
+      },
     }
   };
 
@@ -287,11 +292,11 @@ var jsPsychChangeLoc = (function (jspsych) {
     // if manual stimuli are set, use those
     if (trial.stim_manual.length > 0) {
       for (let i = 0; i < trial.set_size; i++) {
-        stimulus_array.push({stimulus: trial.stim_manual[i], type: "stim"});
+        stimulus_array.push(trial.stim_manual[i]);
       }
     } else {
       for (let i = 0; i < trial.set_size; i++) { // append stimuli (should be already shuffled)
-        stimulus_array.push({stimulus: stims_shuff[i], type: "stim"});
+        stimulus_array.push(stims_shuff[i]);
       }
     }
 
@@ -391,6 +396,16 @@ var jsPsychChangeLoc = (function (jspsych) {
       }
     };
 
+    const clear_screen = () => {
+      canvas.getObjects().forEach((o) => {
+        if (!o.id) {
+          canvas.remove(o);
+        }
+      });
+      canvas.requestRenderAll();
+
+    };
+
     const present_test = async () => {
       //CREATE ARRAY OF DESIRED RESPONSES & SHUFFLE//
       response_array = shuffleArray(response_array);
@@ -408,7 +423,7 @@ var jsPsychChangeLoc = (function (jspsych) {
           draw_stim(test_item, position_array[i], response_array[i]);
         } else {
           draw_stim(
-            stimulus_array[i].stimulus,
+            stimulus_array[i],
             position_array[i],
             response_array[i]
           );
@@ -416,7 +431,6 @@ var jsPsychChangeLoc = (function (jspsych) {
       }
 
       // event listener
-      // idk what this does tbh
       var keyboard_listener = jsPsych.pluginAPI.getKeyboardResponse({
         callback_function: afterResponse,
         valid_responses: valid_responses,
@@ -426,45 +440,54 @@ var jsPsychChangeLoc = (function (jspsych) {
       });
     };
 
+    const present_stimuli = (stimulus_array, position_array,delay,duration) => {
+      return new Promise(async (resolve, reject) => {
+
+
+
+      this.jsPsych.pluginAPI.setTimeout(async function () {
+        for (let istim = 0; istim < stimulus_array.length; istim++) { // show stimuli with response
+          await draw_stim(stimulus_array[istim], position_array[istim]);
+        }
+        this.jsPsych.pluginAPI.setTimeout(function () { // clear screen
+          clear_screen();
+          resolve();
+        },
+          duration);
+      },
+      delay);
+    })};
+
 
     // MAIN TRIAL PROCEDURE HERE
 
     const trial_procedure = async () => {
 
-      
-      // present initial stimulus array
-      for (let istim = 0; istim < stimulus_array.length; istim++) {
-        await draw_stim(stimulus_array[istim].stimulus, position_array[istim]);
-      }
 
-      // present delay period and then test
-      // i should be an honorary italian
-      // this is straight spaghetti i hate it
-      this.jsPsych.pluginAPI.setTimeout(function () {
-        // function to remove objects, executed at end of stim period
-        canvas.getObjects().forEach((o) => {
-          if (!o.id) {
-            canvas.remove(o);
-          }
-        });
-        canvas.requestRenderAll();
-          this.jsPsych.pluginAPI.setTimeout(function () {
-            present_test();
-          }, trial.delay_duration); // delay period, executed at end
-        }, trial.stim_duration);
-      };
 
-      // actually run the trial here
-      show_fixation();
+      await present_stimuli(
+        stimulus_array,
+        position_array,
+        trial.fixation_duration,
+        trial.stim_duration
+      )
 
       this.jsPsych.pluginAPI.setTimeout(function () {
-        //INTERTRIAL INTERVAL//
-        trial_procedure();
-      }, trial.fixation_duration);
-      
-      function afterResponse(info){
-        end_trial(info.key,info.rt)
-      }
+        present_test();
+      },trial.delay_duration);
+    };
+
+    // RUN HERE
+    show_fixation();
+    this.jsPsych.pluginAPI.setTimeout(function () {
+      //INTERTRIAL INTERVAL//
+      trial_procedure();
+    }, trial.fixation_duration);
+    
+    function afterResponse(info){
+      end_trial(info.key,info.rt)
+    }
+
       const end_trial = (key,rt) => {
 
         // remove event listeners
@@ -473,7 +496,7 @@ var jsPsychChangeLoc = (function (jspsych) {
         // let accuracy = jsPsych.pluginAPI.compareKeys(key, String(response_array[test_index]));
         let accuracy = key === String(response_array[test_index]);
         var trial_data = {
-          trial_exp: "change_localization",
+          trial_exp: trial.trial_exp,
           key: key,
           rt: rt,
           stimuli: stimulus_array,
