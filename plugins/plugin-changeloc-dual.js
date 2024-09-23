@@ -164,7 +164,7 @@ var jsPsychChangeLocDual = (function (jspsych) {
       /** the order in which to probe each set */
       probe_order: {
         type: jspsych.ParameterType.OBJECT,
-        default: [1,2],
+        default: [0,1],
         pretty_name: "Probe order",
       },
       /** The delay between probes */
@@ -617,7 +617,7 @@ var jsPsychChangeLocDual = (function (jspsych) {
             }
           },0.1);
         },delay);
-        return test_index
+        return response_array,test_index
       }
 
 
@@ -645,12 +645,37 @@ var jsPsychChangeLocDual = (function (jspsych) {
       // MAIN TRIAL PROCEDURE HERE
 
       const trial_procedure = async () => {
+
+
+        trial_data = [
+          {
+            stimulus_array: stimulus_array_1,
+            position_array: position_array_1,
+            response_array: response_array_1,
+            valid_stimuli: trial.stimuli_1,
+            key: null,
+            rt: null,
+            test_index: null,
+            test_item: null,
+          },
+          {
+            stimulus_array: stimulus_array_1,
+            position_array: position_array_1,
+            response_array: response_array_1,
+            valid_stimuli: trial.stimuli_1,
+            key: null,
+            rt: null,
+            test_index: null,
+            test_item: null,
+          },
+        ]
+
         show_fixation();
 
         // stim 1 
         await present_stimuli(
-          stimulus_array_1,
-          position_array_1,
+          trial_data[0].stimulus_array,
+          trial_data[0].position_array,
           trial.fixation_duration,
           trial.stim_duration_1
         );
@@ -658,8 +683,8 @@ var jsPsychChangeLocDual = (function (jspsych) {
         // stim 2
         
         await present_stimuli(
-          stimulus_array_2,
-          position_array_2,
+          trial_data[1].stimulus_array,
+          trial_data[1].position_array,
           trial.isi,
           trial.stim_duration_2
         );
@@ -668,50 +693,66 @@ var jsPsychChangeLocDual = (function (jspsych) {
 
         // TODO: fix  order
 
-        test_index_1 = await present_test(
-          stimulus_array_1,
-          position_array_1,
-          response_array_1,
-          trial.stimuli_1,
+
+
+
+
+        // TEST THE FIRST PROBE AS SET BY PROBE ORDER
+
+        probe_ix = trial.probe_order[0];
+
+        trial_data[probe_ix].response_array,trial_data[probe_ix].test_index = await present_test(
+          trial_data[probe_ix].stimulus_array,
+          trial_data[probe_ix].position_array,
+          trial_data[probe_ix].response_array,
+          trial_data[probe_ix].valid_stimuli,
           trial.delay_duration
         );
 
         var keyboard_listener = jsPsych.pluginAPI.getKeyboardResponse({
-          callback_function: function (info) {
-            var key_1 = info.key
-            var rt_1 = info.rt
+          callback_function: async function (info) {
+
+            trial_data[probe_ix].key = info.key
+            trial_data[probe_ix].rt = info.rt
+            trial_data[probe_ix].accuracy = info.key === String(trial_data[probe_ix].response_array[trial_data[probe_ix].test_index]);
 
 
 
-            test_index_2 = present_test(
-              stimulus_array_2,
-              position_array_2,
-              response_array_2,
-              trial.stimuli_2,
-              trial.probe_delay
+
+
+            probe_ix = trial.probe_order[1];
+
+            trial_data[probe_ix].response_array,trial_data[probe_ix].test_index = await present_test(
+              trial_data[probe_ix].stimulus_array,
+              trial_data[probe_ix].position_array,
+              trial_data[probe_ix].response_array,
+              trial_data[probe_ix].valid_stimuli,
+              trial.delay_duration
             );
+
+            // second keyboard response here (sorry for ugly)
+            var keyboard_listener = jsPsych.pluginAPI.getKeyboardResponse({
+              callback_function: async function (info) {
+                trial_data[probe_ix].key = info.key
+                trial_data[probe_ix].rt = info.rt
+                trial_data[probe_ix].accuracy = info.key === String(trial_data[probe_ix].response_array[trial_data[probe_ix].test_index]);
+
+                // end trial
+                end_trial(trial_data);
+              },
+              valid_responses: trial_data[probe_ix].response_array, // this is for the first one
+              rt_method: "performance",
+              persist: false,
+              allow_held_key: false,
+            });
 
             
             },
-          valid_responses: response_array,
+          valid_responses: trial_data[probe_ix].response_array, // this is for the first one
           rt_method: "performance",
           persist: false,
           allow_held_key: false,
         });
-
-
-
-        
-
-
-
-
-
-
-
-
-
-
       }
 
       
@@ -729,7 +770,6 @@ var jsPsychChangeLocDual = (function (jspsych) {
         $(document).unbind();
         // data saving
         // let accuracy = jsPsych.pluginAPI.compareKeys(key, String(response_array[test_index]));
-        let accuracy = key === String(response_array[test_index]);
         var trial_data = {
           trial_exp: "change_localization",
           key: key,
