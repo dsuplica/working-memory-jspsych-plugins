@@ -162,17 +162,17 @@ var images = [
 
 var test_procedure = {
     timeline: [trial],
-    timeline_variables: [{fixation_duration: 1000,
+    timeline_variables: [{fixation_duration: 500,
                         set_size_1: 6,
                         stimuli_1: colors,
                         stim_duration_1: 250,
-                        isi: 1000,
+                        isi: 2000,
                         set_size_2: 4,
                         stimuli_2: images,
                         stim_duration_2: 250,
-                        delay_duration: 4000,
-                        probe_order: [0,1],
-                        probe_delay: 500}],
+                        delay_duration: 900,
+                        probe_order: [1,0],
+                        probe_delay: 200}],
     repetitions: 5,
 };  
 

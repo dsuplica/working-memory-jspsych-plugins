@@ -591,6 +591,16 @@ var jsPsychChangeLocDual = (function (jsPsych) {
         }
       };
 
+      const clear_screen = () => {
+        canvas.getObjects().forEach((o) => {
+          if (!o.id) {
+            canvas.remove(o);
+          }
+        });
+        canvas.requestRenderAll();
+
+      }
+
 
       const present_test = async (stimulus_array,position_array,response_array,all_stimuli,delay) => {
         //CREATE ARRAY OF DESIRED RESPONSES & SHUFFLE//
@@ -622,25 +632,23 @@ var jsPsychChangeLocDual = (function (jsPsych) {
 
 
 
-      const present_stimuli = async (stimulus_array, position_array,delay,duration) => {
-        console.log("CALL")
+      const present_stimuli = (stimulus_array, position_array,delay,duration) => {
+        return new Promise(async (resolve, reject) => {
+
+
 
         this.jsPsych.pluginAPI.setTimeout(async function () {
           for (let istim = 0; istim < stimulus_array.length; istim++) { // show stimuli with response
             await draw_stim(stimulus_array[istim].stimulus, position_array[istim]);
           }
           this.jsPsych.pluginAPI.setTimeout(function () { // clear screen
-            canvas.getObjects().forEach((o) => {
-              if (!o.id) {
-                canvas.remove(o);
-              }
-            });
-            canvas.requestRenderAll();
+            clear_screen();
+            resolve();
           },
             duration);
         },
         delay);
-      };
+      })};
 
 
       // MAIN TRIAL PROCEDURE HERE
@@ -648,7 +656,7 @@ var jsPsychChangeLocDual = (function (jsPsych) {
       const trial_procedure = async () => {
 
 
-        var trial_data = [
+        let trial_data = [
           {
             stimulus_array: stimulus_array_1,
             position_array: position_array_1,
@@ -662,10 +670,10 @@ var jsPsychChangeLocDual = (function (jsPsych) {
             test_item: null,
           },
           {
-            stimulus_array: stimulus_array_1,
-            position_array: position_array_1,
-            response_array: response_array_1,
-            valid_stimuli: trial.stimuli_1,
+            stimulus_array: stimulus_array_2,
+            position_array: position_array_2,
+            response_array: response_array_2,
+            valid_stimuli: trial.stimuli_2,
             key: null,
             rt: null,
             correct_answer: null,
@@ -678,19 +686,18 @@ var jsPsychChangeLocDual = (function (jsPsych) {
         show_fixation();
 
         // stim 1 
-        // await present_stimuli(
-        //   trial_data[0].stimulus_array,
-        //   trial_data[0].position_array,
-        //   trial.fixation_duration,
-        //   trial.stim_duration_1
-        // ).then(
-          present_stimuli(
+        await present_stimuli(
+          trial_data[0].stimulus_array,
+          trial_data[0].position_array,
+          trial.fixation_duration,
+          trial.stim_duration_1
+        )
+        await present_stimuli(
             trial_data[1].stimulus_array,
             trial_data[1].position_array,
             trial.isi,
             trial.stim_duration_2
           )
-        // )
 
         // stim 2
         
@@ -716,22 +723,24 @@ var jsPsychChangeLocDual = (function (jsPsych) {
           trial.delay_duration
         );
 
-        console.log("PASSED TEST PRESENTATION")
+        trial_data[probe_ix].test_item = trial_data[probe_ix].stimulus_array[trial_data[probe_ix].test_index].stimulus;
+
+
 
         var keyboard_listener = this.jsPsych.pluginAPI.getKeyboardResponse({
-          callback_function: async function (info) {
-            console.log("GOT RESPONSE")
+          callback_function: async (info) => {
 
             trial_data[probe_ix].key = info.key
             trial_data[probe_ix].rt = info.rt
-            trial_data[probe_ix].correct_answer = trial_data[probe_ix].response_array[trial_data[probe_ix].test_index];
+            trial_data[probe_ix].correct_answer = String(trial_data[probe_ix].response_array[trial_data[probe_ix].test_index]);
             trial_data[probe_ix].accuracy = info.key === trial_data[probe_ix].correct_answer
 
 
 
 
-
+            clear_screen();
             probe_ix = trial.probe_order[1];
+            
 
             trial_data[probe_ix].response_array,trial_data[probe_ix].test_index = await present_test(
               trial_data[probe_ix].stimulus_array,
@@ -740,18 +749,21 @@ var jsPsychChangeLocDual = (function (jsPsych) {
               trial_data[probe_ix].valid_stimuli,
               trial.delay_duration
             );
+            trial_data[probe_ix].test_item = trial_data[probe_ix].stimulus_array[trial_data[probe_ix].test_index].stimulus;
+
 
             // second keyboard response here (sorry for ugly)
             var keyboard_listener_2 = this.jsPsych.pluginAPI.getKeyboardResponse({
               callback_function: async function (info) {
                 trial_data[probe_ix].key = info.key
                 trial_data[probe_ix].rt = info.rt
-                trial_data[probe_ix].accuracy = info.key === String(trial_data[probe_ix].response_array[trial_data[probe_ix].test_index]);
+                trial_data[probe_ix].correct_answer = String(trial_data[probe_ix].response_array[trial_data[probe_ix].test_index]);
+                trial_data[probe_ix].accuracy = info.key === trial_data[probe_ix].correct_answer
 
                 // end trial
                 end_trial(trial_data);
               },
-              valid_responses: trial_data[probe_ix].response_array, // this is for the first one
+              valid_responses: trial_data[probe_ix].response_array.map(String), // this is for the first one
               rt_method: "performance",
               persist: false,
               allow_held_key: false,
@@ -759,7 +771,7 @@ var jsPsychChangeLocDual = (function (jsPsych) {
 
             
             },
-          valid_responses: trial_data[probe_ix].response_array, // this is for the first one
+          valid_responses: trial_data[probe_ix].response_array.map(String), // this is for the first one
           rt_method: "performance",
           persist: false,
           allow_held_key: false,
