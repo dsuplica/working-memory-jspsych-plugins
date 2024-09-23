@@ -655,6 +655,8 @@ var jsPsychChangeLocDual = (function (jspsych) {
             valid_stimuli: trial.stimuli_1,
             key: null,
             rt: null,
+            correct_answer: null,
+            accuracy: null,
             test_index: null,
             test_item: null,
           },
@@ -665,6 +667,8 @@ var jsPsychChangeLocDual = (function (jspsych) {
             valid_stimuli: trial.stimuli_1,
             key: null,
             rt: null,
+            correct_answer: null,
+            accuracy: null,
             test_index: null,
             test_item: null,
           },
@@ -714,7 +718,8 @@ var jsPsychChangeLocDual = (function (jspsych) {
 
             trial_data[probe_ix].key = info.key
             trial_data[probe_ix].rt = info.rt
-            trial_data[probe_ix].accuracy = info.key === String(trial_data[probe_ix].response_array[trial_data[probe_ix].test_index]);
+            trial_data[probe_ix].correct_answer = trial_data[probe_ix].response_array[trial_data[probe_ix].test_index];
+            trial_data[probe_ix].accuracy = info.key === trial_data[probe_ix].correct_answer
 
 
 
@@ -759,32 +764,40 @@ var jsPsychChangeLocDual = (function (jspsych) {
 
 
 
-
-
-      function afterResponse(info) {
-        return info.key,info.rt
-      }
-      const end_trial = (key_1, rt_1,key_2,rt_2) => {
+      const end_trial = (input_data) => {
 
         // remove event listeners
         $(document).unbind();
         // data saving
         // let accuracy = jsPsych.pluginAPI.compareKeys(key, String(response_array[test_index]));
+        
+
+        // save data into trial_data
         var trial_data = {
-          trial_exp: "change_localization",
-          key: key,
-          rt: rt,
-          stimuli: stimulus_array,
-          positions: position_array,
-          test_index: test_index,
-          test_item: test_item,
-          correct_answer: response_array[test_index],
-          response_array: response_array,
-          set_size: trial.set_size,
-          accuracy: accuracy,
+          trial_exp: "change_localization_dual",
+          set_size_1: trial.set_size_1,
+          stimuli_1: input_data[0].stimulus_array,
+          positions_1: input_data[0].position_array,
+          response_array_1: input_data[0].response_array,
+          test_index_1: input_data[0].test_index,
+          test_item_1: input_data[0].test_item,
+          correct_answer_1: input_data[0].correct_answer,
+          key_1: input_data[0].key,
+          rt_1: input_data[0].rt,
+          accuracy_1: input_data[0].accuracy,
 
-
+          set_size_2: trial.set_size_2,
+          stimuli_2: input_data[1].stimulus_array,
+          positions_2: input_data[1].position_array,
+          response_array_2: input_data[1].response_array,
+          test_index_2: input_data[1].test_index,
+          test_item_2: input_data[1].test_item,
+          correct_answer_2: input_data[1].correct_answer,
+          key_2: input_data[1].key,
+          rt_2: input_data[1].rt,
+          accuracy_2: input_data[1].accuracy,
         };
+
         console.log(trial_data)
         // end trial and go to next
         this.jsPsych.finishTrial(trial_data);
