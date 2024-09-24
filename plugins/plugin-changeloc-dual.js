@@ -281,7 +281,7 @@ var jsPsychChangeLocDual = (function (jsPsych) {
       set_size_2: {
         type: jsPsych.ParameterType.INT,
       },
-      /** Accuracy */
+      /** Accuracy for stimulus */
       accuracy_2: {
         type: jsPsych.ParameterType.BOOL,
       },
@@ -328,16 +328,11 @@ var jsPsychChangeLocDual = (function (jsPsych) {
 
       // VARIABLE HARDCODING. TODO: make these trial parameters
 
-      let test_index_1; // index of item to be changed
-      let test_item_1; // new value for changed item
       let response_array_1 = range(1, trial.set_size_1 + 1); // array of possible responses
-      const valid_responses_1 = response_array_1.map(String); // array of valid responses
 
 
-      let test_index_2; 
-      let test_item_2; 
       let response_array_2 = range(1, trial.set_size_2 + 1); 
-      const valid_responses_2 = response_array_2.map(String); 
+
       const canvasSize = 600;
       const edge_buffer = 100;
       const stim_buffer = 50;
@@ -442,6 +437,7 @@ var jsPsychChangeLocDual = (function (jsPsych) {
         }
       }
 
+      // do it all again for the second stimulus type
 
       let position_array_2 = [];
 
@@ -591,7 +587,7 @@ var jsPsychChangeLocDual = (function (jsPsych) {
         }
       };
 
-      const clear_screen = () => {
+      const clear_screen = () => { // remove all stimuli on screen
         canvas.getObjects().forEach((o) => {
           if (!o.id) {
             canvas.remove(o);
@@ -602,28 +598,23 @@ var jsPsychChangeLocDual = (function (jsPsych) {
       }
 
 
+      // function to assign, present, and return test
       const present_test = async (stimulus_array,position_array,response_array,all_stimuli,delay) => {
-        //CREATE ARRAY OF DESIRED RESPONSES & SHUFFLE//
+        //CREATE ARRAY OF DESIRED RESPONSES & SHUFFLE
         response_array = shuffleArray(response_array);
         // get index of test item
         let test_index = randomInt(0, stimulus_array.length);
-
-
         let test_item = randChoice(all_stimuli.filter(x => !stimulus_array.includes(x))); // get a unique value from stimuli
-        
         let new_stim_array = stimulus_array.slice(); // copy array
+
         new_stim_array[test_index] = test_item;
 
-
         // show the initial array after waiting the delay before
-
-        
         this.jsPsych.pluginAPI.setTimeout(async function () {
           for (let istim = 0; istim < new_stim_array.length; istim++) { // show stimuli with response
             await draw_stim(new_stim_array[istim], position_array[istim]);
           }
-
-          this.jsPsych.pluginAPI.setTimeout(async function () { // draw with numbers
+          this.jsPsych.pluginAPI.setTimeout(async function () { // then draw with numbers after 100ms
             for (let istim = 0; istim < new_stim_array.length; istim++) {
               await draw_stim(new_stim_array[istim], position_array[istim], response_array[istim]);
             }
@@ -633,11 +624,9 @@ var jsPsychChangeLocDual = (function (jsPsych) {
       }
 
 
-
+      // function to handle stimulus presentation and fixations before and after
       const present_stimuli = (stimulus_array, position_array,delay,duration) => {
         return new Promise(async (resolve, reject) => {
-
-
 
         this.jsPsych.pluginAPI.setTimeout(async function () {
           for (let istim = 0; istim < stimulus_array.length; istim++) { // show stimuli with response
@@ -657,7 +646,7 @@ var jsPsychChangeLocDual = (function (jsPsych) {
 
       const trial_procedure = async () => {
 
-
+        // initialize trial_data for use later
         let trial_data = [
           {
             stimulus_array: stimulus_array_1,
@@ -704,16 +693,9 @@ var jsPsychChangeLocDual = (function (jsPsych) {
         // stim 2
         
 
-
         // delay and first test
 
-        // TODO: fix  order
-
-
-
-
-
-        // TEST THE FIRST PROBE AS SET BY PROBE ORDER
+        // test the first probe as set by probe order
 
         var probe_ix = trial.probe_order[0];
 
@@ -725,12 +707,11 @@ var jsPsychChangeLocDual = (function (jsPsych) {
           trial.delay_duration
         );
 
-
-
-
+        // wait for a response here
         var keyboard_listener = this.jsPsych.pluginAPI.getKeyboardResponse({
           callback_function: async (info) => {
 
+            // save out data
             trial_data[probe_ix].key = info.key
             trial_data[probe_ix].rt = info.rt
             trial_data[probe_ix].correct_answer = String(trial_data[probe_ix].response_array[trial_data[probe_ix].test_index]);
@@ -739,6 +720,7 @@ var jsPsychChangeLocDual = (function (jsPsych) {
 
 
 
+            // then test the second probe
             clear_screen();
             probe_ix = trial.probe_order[1];
             
@@ -763,7 +745,7 @@ var jsPsychChangeLocDual = (function (jsPsych) {
                 // end trial
                 end_trial(trial_data);
               },
-              valid_responses: trial_data[probe_ix].response_array.map(String), // this is for the first one
+              valid_responses: trial_data[probe_ix].response_array.map(String), // this is for the second one
               rt_method: "performance",
               persist: false,
               allow_held_key: false,
@@ -778,6 +760,7 @@ var jsPsychChangeLocDual = (function (jsPsych) {
         });
       }
 
+      // call trial
       trial_procedure();
       
 

@@ -396,7 +396,7 @@ var jsPsychChangeLoc = (function (jspsych) {
       }
     };
 
-    const clear_screen = () => {
+    const clear_screen = () => { // remove all stimuli on screen
       canvas.getObjects().forEach((o) => {
         if (!o.id) {
           canvas.remove(o);
@@ -419,9 +419,9 @@ var jsPsychChangeLoc = (function (jspsych) {
             test_item = trial.stimuli.filter(x => !trial.stim_manual.includes(x))[0]; // populate with a unique value from stimuli
             draw_stim(test_item, position_array[i], response_array[i]);
           }
-          test_item = stims_shuff[trial.set_size + 1];
+          test_item = stims_shuff[trial.set_size + 1]; // get a new value
           draw_stim(test_item, position_array[i], response_array[i]);
-        } else {
+        } else { // normal stim 
           draw_stim(
             stimulus_array[i],
             position_array[i],
@@ -480,7 +480,7 @@ var jsPsychChangeLoc = (function (jspsych) {
     // RUN HERE
     show_fixation();
     this.jsPsych.pluginAPI.setTimeout(function () {
-      //INTERTRIAL INTERVAL//
+      //INTERTRIAL INTERVAL then run trial ode
       trial_procedure();
     }, trial.fixation_duration);
     
