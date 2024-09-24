@@ -609,7 +609,7 @@ var jsPsychChangeLocDual = (function (jsPsych) {
         let test_index = randomInt(0, stimulus_array.length);
 
 
-        let test_item = all_stimuli.filter(x => !stimulus_array.includes(x))[0]; // populate with a unique value from stimuli
+        let test_item = randChoice(all_stimuli.filter(x => !stimulus_array.includes(x))); // get a unique value from stimuli
         
         let new_stim_array = stimulus_array.slice(); // copy array
         new_stim_array[test_index] = test_item;
