@@ -629,7 +629,7 @@ var jsPsychChangeLocDual = (function (jsPsych) {
             }
           },100);
         },delay);
-        return response_array,test_index,test_item
+        return [response_array,test_index,test_item];
       }
 
 
@@ -717,7 +717,7 @@ var jsPsychChangeLocDual = (function (jsPsych) {
 
         var probe_ix = trial.probe_order[0];
 
-        trial_data[probe_ix].response_array,trial_data[probe_ix].test_index,trial_data[probe_ix].test_item = await present_test(
+       [trial_data[probe_ix].response_array,trial_data[probe_ix].test_index,trial_data[probe_ix].test_item] = await present_test(
           trial_data[probe_ix].stimulus_array,
           trial_data[probe_ix].position_array,
           trial_data[probe_ix].response_array,
@@ -743,7 +743,7 @@ var jsPsychChangeLocDual = (function (jsPsych) {
             probe_ix = trial.probe_order[1];
             
 
-            trial_data[probe_ix].response_array,trial_data[probe_ix].test_index,trial_data[probe_ix].test_item = await present_test(
+            [trial_data[probe_ix].response_array,trial_data[probe_ix].test_index,trial_data[probe_ix].test_item] = await present_test(
               trial_data[probe_ix].stimulus_array,
               trial_data[probe_ix].position_array,
               trial_data[probe_ix].response_array,

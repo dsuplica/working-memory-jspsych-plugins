@@ -121,8 +121,6 @@ var trial = {
         stimuli: jsPsych.timelineVariable("stimuli"),
         stim_duration: jsPsych.timelineVariable("stim_duration"),
         delay_duration: jsPsych.timelineVariable("delay_duration"),
-
-
 };
 
 colors = [
