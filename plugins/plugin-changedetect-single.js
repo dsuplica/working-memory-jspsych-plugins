@@ -67,14 +67,14 @@ var jsPsychChangeLoc = (function (jspsych) {
         ],
       },
 
-      /** Stimuli to present in the trial (overrides random selection) */
+      /** Stimuli to present in the trial (override) */
       stim_manual: {
         type: jspsych.ParameterType.OBJECT,
         pretty_name: "Manually set stimuli",
         default: [],
       },
 
-      /** Locations to present stimuli at during the trial (overrides random selection) */
+      /** Locations to present stimuli at during the trial (override) */
 
       pos_manual: {
         type: jspsych.ParameterType.OBJECT,
@@ -97,19 +97,27 @@ var jsPsychChangeLoc = (function (jspsych) {
         pretty_name: "Delay duration",
       },
 
-      /** Probe stimulus to present (overrides random selection) */
+      /** Probe stimulus to present (override) */
       probe_manual: {
-        type: jspsych.ParameterType.OBJECT,
+        type: jspsych.ParameterType.STRING,
         pretty_name: "Manual probe",
-        default: [],
+        default: null,
       },
 
-      /** Locations to present stimuli at during the trial (overrides random selection) */
+      /** Locations to present stimuli at during the trial (override) */
 
       probe_pos_manual: {
         type: jspsych.ParameterType.OBJECT,
         pretty_name: "Manual probe position",
         default: [],
+      },
+
+      /** Whether the test stimulus should be the same or different as the previous one (override) */
+
+      change: {
+        type: jspsych.ParameterType.BOOL,
+        pretty_name: "Change",
+        default: null,
       },
 
       /** Response keys to press */
@@ -119,9 +127,6 @@ var jsPsychChangeLoc = (function (jspsych) {
         pretty_name: "Response Keys",
         default: ["z","slash"],
       },      
-
-
-
 
     },
     data: {
@@ -215,8 +220,7 @@ var jsPsychChangeLoc = (function (jspsych) {
 
       let test_index; // index of item to be changed
       let test_item; // new value for changed item
-      let response_array = range(1, trial.set_size + 1); // array of possible responses
-      const valid_responses = response_array.map(String); // array of valid responses
+
       const canvasSize = 600;
       const edge_buffer = 100;
       const stim_buffer = 50; 
@@ -357,24 +361,6 @@ var jsPsychChangeLoc = (function (jspsych) {
           canvas.add(rect);
           canvas.requestRenderAll();
           resolve();
-          if (label) {
-            //ADD NUMBER LABEL//
-            var label_object = new fabric.Text(label.toString(), {
-              left: pos[0] - stim_size / 4, // shift to convert from center to left and top
-              top: pos[1] - stim_size / 2,
-              fill: "#9E9E9E",
-              fontSize: 30,
-              fontWeight: "bold",
-              hasBorders: false,
-              hasControls: false,
-              hoverCursor: "default",
-              lockMovementX: true,
-              lockMovementY: true,
-            });
-            canvas.add(label_object);
-            canvas.requestRenderAll();
-            resolve();
-        }
       });
     };
 
@@ -395,37 +381,18 @@ var jsPsychChangeLoc = (function (jspsych) {
           canvas.add(img);
           canvas.requestRenderAll();
     
-          if (label) {
-    
-            // ADD NUMBER LABEL
-            var label_object = new fabric.Text(label.toString(), {
-              left: pos[0] - stim_size / 4, // shift to convert from center to left and top
-              top: pos[1] - stim_size / 2,
-              fill: "#FFFFFF",
-              fontSize: 30,
-              fontWeight: "bold",
-              hasBorders: false,
-              hasControls: false,
-              hoverCursor: "default",
-              lockMovementX: true,
-              lockMovementY: true,
-            });
-            canvas.add(label_object);
-            canvas.requestRenderAll();
-          }
-    
           resolve();
         });
       });
     };
 
-    const draw_stim = async (stimulus, pos, label) => {
+    const draw_stim = async (stimulus, pos) => {
       let pattern = /^#/;
       let is_color = pattern.test(stimulus); // SEARCH FOR '#' IN STIMULUS ARGUMENT TO CONFIRM STIMULUS IS A COLOR
       if (is_color) {
-        await draw_colored_square(stimulus, pos, label);
+        await draw_colored_square(stimulus, pos);
       } else {
-        await draw_image(stimulus, pos, label);
+        await draw_image(stimulus, pos);
       }
     };
 
@@ -439,34 +406,56 @@ var jsPsychChangeLoc = (function (jspsych) {
 
     };
 
-    const present_test = async () => {
-      //CREATE ARRAY OF DESIRED RESPONSES & SHUFFLE//
-      response_array = shuffleArray(response_array);
-      // get index of test item
+    const present_test =  () => {
+
+
+      // pick an item to test
       test_index = randomInt(0,stimulus_array.length);
 
-      for (var i = 0; i < stimulus_array.length; i++) {
-        // replace test stim with a new one
-        if (i === test_index) {
-          if (trial.stim_manual.length > 0) {
-            test_item = trial.stimuli.filter(x => !trial.stim_manual.includes(x))[0]; // populate with a unique value from stimuli
-            draw_stim(test_item, position_array[i], response_array[i]);
-          }
-          test_item = stims_shuff[trial.set_size + 1]; // get a new value
-          draw_stim(test_item, position_array[i], response_array[i]);
-        } else { // normal stim 
-          draw_stim(
-            stimulus_array[i],
-            position_array[i],
-            response_array[i]
-          );
+      // pick values here
+
+      // manual probe
+      if (trial.probe_manual !== null) {
+        test_item = trial.probe_manual;
+        if (!stimulus_array.includes(test_item)){ // unexpected? will always overwrite change. also doesn't check positions
+          trial.change = true;
+        }else{
+          trial.change = false;
+        }
+      }else{
+        if (trial.change === null) {
+          trial.change = Math.random() < 0.5; // if change is not set, randomly assign
+        }
+
+        if (trial.change) {
+          test_item = randChoice(trial.stimuli.filter(x => !stimulus_array.includes(x))); // if change, pick a new item
+        }else{
+          test_item = stimulus_array[test_index]; // if no change, pick the existing item
         }
       }
+
+      if (trial.probe_pos_manual.length > 0) { // probe position
+        if (trial.probe_pos_manual.length !== 2) {
+          throw new Error("Probe position array must have ONLY two values");
+        }
+
+        var probe_position = trial.probe_pos_manual;
+      } else {
+        var probe_position = position_array[test_index]; // otherwise pick the corresponding location
+      }
+
+      // present probe here
+
+      draw_stim(test_item, probe_position);
+
+
+
+
 
       // event listener
       var keyboard_listener = jsPsych.pluginAPI.getKeyboardResponse({
         callback_function: afterResponse,
-        valid_responses: valid_responses,
+        valid_responses: trial.keys,
         rt_method: "performance",
         persist: false,
         allow_held_key: false,
