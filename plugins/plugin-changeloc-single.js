@@ -39,6 +39,12 @@ var jsPsychChangeLoc = (function (jspsych) {
     version: "1.0.0", // When working in a Javascript environment with no build, you will need to manually put set the version information. This is used for metadata purposes and publishing.
     parameters: {
 
+      /** name of each trial */
+      trial_exp: {
+        type: jsPsych.ParameterType.STRING,
+        default: "change_localization_dual",
+      },
+
       /** The duration of fixation prior to stimulus presentation */
       fixation_duration: {
         type: jspsych.ParameterType.INT,
