@@ -30,12 +30,11 @@ function shuffleArray(arr){
 
 
 
-// code is based on Temilade Adekoya's plugin-ChangeLoc plugin
 var jsPsychChangeLoc = (function (jspsych) {
   "use strict";
   
   const info = {
-    name: "ChangeLocalizationPlugin",
+    name: "ChangeDetectionPlugin",
     version: "1.0.0", // When working in a Javascript environment with no build, you will need to manually put set the version information. This is used for metadata purposes and publishing.
     parameters: {
 
@@ -94,18 +93,38 @@ var jsPsychChangeLoc = (function (jspsych) {
 
       delay_duration: {
         type: jspsych.ParameterType.INT,
-        default: 4000,
+        default: 1000,
         pretty_name: "Delay duration",
-      }
+      },
+
+      /** Probe stimulus to present (overrides random selection) */
+      probe_manual: {
+        type: jspsych.ParameterType.OBJECT,
+        pretty_name: "Manual probe",
+        default: [],
+      },
+
+      /** Locations to present stimuli at during the trial (overrides random selection) */
+
+      probe_pos_manual: {
+        type: jspsych.ParameterType.OBJECT,
+        pretty_name: "Manual probe position",
+        default: [],
+      },
+
+      /** Response keys to press */
+
+      keys: {
+        type: jspsych.ParameterType.OBJECT,
+        pretty_name: "Response Keys",
+        default: ["z","slash"],
+      },      
+
+
 
 
     },
     data: {
-      /** name of this trial */
-      trial_exp: {
-        type: jspsych.ParameterType.STRING,
-      },
-
       /** Response key pressed */
       key: {
         type: jspsych.ParameterType.KEY,
@@ -147,6 +166,10 @@ var jsPsychChangeLoc = (function (jspsych) {
       set_size: {
         type: jspsych.ParameterType.INT,
       },
+      /** Change present? */
+      change: {
+        type: jspsych.ParameterType.BOOL,
+      },
       /** Accuracy */
       accuracy: {
         type: jspsych.ParameterType.BOOL,
@@ -154,23 +177,23 @@ var jsPsychChangeLoc = (function (jspsych) {
       /** Name of trial */
       trial_exp: {
         type: jspsych.ParameterType.STRING,
-        default: "change_localization",
+        default: "change_detection",
       },
     }
   };
 
   
   /**
-   * **{plugin-changeloc-single}**
+   * **{plugin-changedetect-single}**
    *
    * A plugin to run change localization experiments of varying set sizes
    * Display stimuli simultaneously, then test on a array of the same with one changed
    * Can run with colors or images
    *
    * @author Darius Suplica
-   * @see {@link {https://github.com/dsuplica/change-localization-jspsych-plugins}}
+   * @see {@link {https://github.com/dsuplica/working-memory-jspsych-plugins}}
    */
-  class ChangeLocPlugin {
+  class ChangeDetectionPlugin {
     constructor(jsPsych) {
       this.jsPsych = jsPsych;
     }
@@ -205,12 +228,12 @@ var jsPsychChangeLoc = (function (jspsych) {
 
       //CREATE CANVAS OBJECT//
       display_element.innerHTML =
-      "<div id='jspsych-changeloc-plugin' style='position: relative; width:" +
+      "<div id='jspsych-changedetect-plugin' style='position: relative; width:" +
       canvasSize +
       "px; height:" +
       canvasSize +
       "px'></div>";
-      display_element.querySelector("#jspsych-changeloc-plugin").innerHTML +=
+      display_element.querySelector("#jspsych-changedetect-plugin").innerHTML +=
         "<canvas id='c', width = '" +
         canvasSize +
         "', height = '" +
@@ -526,7 +549,7 @@ var jsPsychChangeLoc = (function (jspsych) {
       }
     }
   }
-  ChangeLocPlugin.info = info;
+  ChangeDetectionPlugin.info = info;
 
-  return ChangeLocPlugin;
+  return ChangeDetectionPlugin;
 })(jsPsychModule);
