@@ -459,7 +459,7 @@ var jsPsychChangeLocDual = (function (jsPsych) {
       } else {
         const stim_diag = Math.sqrt(2) * stim_size; // diagonal distance
 
-        i=0;
+        let i=0;
         position_loop:
         while (position_array_2.length < trial.set_size_2) {
           
