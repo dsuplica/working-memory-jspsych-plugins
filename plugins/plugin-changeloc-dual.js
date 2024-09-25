@@ -395,23 +395,33 @@ var jsPsychChangeLocDual = (function (jsPsych) {
       } else {
         const stim_diag = Math.sqrt(2) * stim_size; // diagonal distance
 
+        let i = 0;
         position_loop:
         while (position_array_1.length < trial.set_size_1) {
+
+          i++;
+          // avoid infinite while loop
+          if (i>100){
+            position_array = [];
+            i = 0;
+            continue position_loop; // restart loop
+          }
+
           let x = randomInt(edge_buffer, canvasSize - edge_buffer);
           let y = randomInt(edge_buffer, canvasSize - edge_buffer);
           let x2;
           let y2;
 
           if (dist_between_points(x, y, 0, 0) < stim_diag * 3 + stim_buffer) {
-        continue position_loop; // too close to center
+            continue position_loop; // too close to center
           }
 
           if (position_array_1.length > 0) {
-        for ([x2, y2] of position_array_1) {
-          if (dist_between_points(x, y, x2, y2) < stim_diag * 2 + stim_buffer) {
-            continue position_loop; // too close to another stimulus
-          }
-        }
+            for ([x2, y2] of position_array_1) {
+              if (dist_between_points(x, y, x2, y2) < stim_diag * 2 + stim_buffer) {
+                continue position_loop; // too close to another stimulus
+              }
+            }
           }
 
           // Add the position to the array if it passes the check
@@ -449,23 +459,33 @@ var jsPsychChangeLocDual = (function (jsPsych) {
       } else {
         const stim_diag = Math.sqrt(2) * stim_size; // diagonal distance
 
+        i=0;
         position_loop:
         while (position_array_2.length < trial.set_size_2) {
+          
+          i++;
+          // avoid infinite while loop
+          if (i>100){
+            position_array = [];
+            i = 0;
+            continue position_loop; // restart loop
+          }
+
           let x = randomInt(edge_buffer, canvasSize - edge_buffer);
           let y = randomInt(edge_buffer, canvasSize - edge_buffer);
           let x2;
           let y2;
 
           if (dist_between_points(x, y, 0, 0) < stim_diag * 3 + stim_buffer) {
-        continue position_loop; // too close to center
+            continue position_loop; // too close to center
           }
 
           if (position_array_2.length > 0) {
-        for ([x2, y2] of position_array_2) {
-          if (dist_between_points(x, y, x2, y2) < stim_diag * 2 + stim_buffer) {
-            continue position_loop; // too close to another stimulus
-          }
-        }
+            for ([x2, y2] of position_array_2) {
+              if (dist_between_points(x, y, x2, y2) < stim_diag * 2 + stim_buffer) {
+                continue position_loop; // too close to another stimulus
+              }
+            }
           }
 
           // Add the position to the array if it passes the check

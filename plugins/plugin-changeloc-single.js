@@ -257,23 +257,33 @@ var jsPsychChangeLoc = (function (jspsych) {
 
         const stim_diag = Math.sqrt(2) * stim_size; // diagonal distance
 
+        let i = 0;
         position_loop:
         while (position_array.length < trial.set_size) {
+          i++;
+
+          // avoid infinite while loop
+          if (i>100){
+            position_array = [];
+            i = 0;
+            continue position_loop; // restart loop
+          }
+
           let x = randomInt(edge_buffer, canvasSize - edge_buffer);
           let y = randomInt(edge_buffer, canvasSize - edge_buffer);
           let x2;
           let y2;
       
           if (dist_between_points(x, y, 0, 0) < stim_diag * 3 + stim_buffer) {
-              continue position_loop; // too close to center
+            continue position_loop; // too close to center
           }
           
           if (position_array.length > 0) {
             for ([x2,y2] of position_array) {
-                if (dist_between_points(x, y, x2, y2) < stim_diag * 2 + stim_buffer) {
-                    continue position_loop; // too close to another stimulus
-                }
+              if (dist_between_points(x, y, x2, y2) < stim_diag * 2 + stim_buffer) {
+                continue position_loop; // too close to another stimulus
               }
+            }
           }
           
 
