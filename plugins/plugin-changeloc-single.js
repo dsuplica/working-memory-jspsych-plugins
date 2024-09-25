@@ -426,10 +426,11 @@ var jsPsychChangeLoc = (function (jspsych) {
         // replace test stim with a new one
         if (i === test_index) {
           if (trial.stim_manual.length > 0) {
-            test_item = trial.stimuli.filter(x => !trial.stim_manual.includes(x))[0]; // populate with a unique value from stimuli
-            draw_stim(test_item, position_array[i], response_array[i]);
+            test_item = randChoice(trial.stimuli.filter(x => !trial.stim_manual.includes(x))); // populate with a unique value from stimuli
+          }else{
+            test_item = stims_shuff[trial.set_size + 1]; // get a new value
           }
-          test_item = stims_shuff[trial.set_size + 1]; // get a new value
+        
           draw_stim(test_item, position_array[i], response_array[i]);
         } else { // normal stim 
           draw_stim(
