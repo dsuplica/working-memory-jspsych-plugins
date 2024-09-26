@@ -162,11 +162,6 @@ var jsPsychChangeLoc = (function (jspsych) {
       correct_answer: {
         type: jspsych.ParameterType.STRING,
       },
-      /** Array of responses */
-      response_array: {
-        type: jspsych.ParameterType.OBJECT,
-        default: [],
-      },
       /** Number of stimuli */
       set_size: {
         type: jspsych.ParameterType.INT,
@@ -502,7 +497,7 @@ var jsPsychChangeLoc = (function (jspsych) {
     // RUN HERE
     show_fixation();
     this.jsPsych.pluginAPI.setTimeout(function () {
-      //INTERTRIAL INTERVAL then run trial ode
+      //INTERTRIAL INTERVAL then run trial
       trial_procedure();
     }, trial.fixation_duration);
     
@@ -515,8 +510,16 @@ var jsPsychChangeLoc = (function (jspsych) {
         // remove event listeners
         $(document).unbind();
         // data saving
-        // let accuracy = jsPsych.pluginAPI.compareKeys(key, String(response_array[test_index]));
-        let accuracy = key === String(response_array[test_index]);
+        // accuracy: first key is change second is no change
+
+        if (trial.change){
+          let correct_answer = trial.keys[0]
+        }else{
+          let correct_answer = trial.keys[1]
+        }
+
+        let accuracy = key === correct_answer;
+
         var trial_data = {
           trial_exp: trial.trial_exp,
           key: key,
@@ -525,8 +528,8 @@ var jsPsychChangeLoc = (function (jspsych) {
           positions: position_array,
           test_index: test_index,
           test_item: test_item,
-          correct_answer: response_array[test_index],
-          response_array: response_array,
+          correct_answer: correct_answer, //CHANGE
+          change: trial.change,
           set_size: trial.set_size,
           accuracy: accuracy,
           
