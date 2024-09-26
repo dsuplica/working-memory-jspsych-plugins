@@ -125,12 +125,12 @@ var jsPsychChangeDetection = (function (jspsych) {
         default: null,
       },
 
-      /** Response keys to press */
+      /** Response keys to press. First key is no change, second is change */
 
       keys: {
         type: jspsych.ParameterType.OBJECT,
         pretty_name: "Response Keys",
-        default: ["z","divide"],
+        default: ["z","/"],
       },      
 
     },
@@ -515,12 +515,12 @@ var jsPsychChangeDetection = (function (jspsych) {
         // remove event listeners
         $(document).unbind();
         // data saving
-        // accuracy: first key is change second is no change
+        // accuracy: first key is no change second is change
 
         if (trial.change){
-          var correct_answer = trial.keys[0];
-        }else{
           var correct_answer = trial.keys[1];
+        }else{
+          var correct_answer = trial.keys[0];
         }
 
         let accuracy = key === correct_answer;
