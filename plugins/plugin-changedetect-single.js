@@ -27,10 +27,15 @@ function shuffleArray(arr){
   return newArr;
 }
 
+function randChoice(arr){
+  return arr[Math.floor(Math.random()*arr.length)];
+}
 
 
 
-var jsPsychChangeLoc = (function (jspsych) {
+
+
+var jsPsychChangeDetection = (function (jspsych) {
   "use strict";
   
   const info = {
@@ -125,7 +130,7 @@ var jsPsychChangeLoc = (function (jspsych) {
       keys: {
         type: jspsych.ParameterType.OBJECT,
         pretty_name: "Response Keys",
-        default: ["z","slash"],
+        default: ["z","divide"],
       },      
 
     },
@@ -513,9 +518,9 @@ var jsPsychChangeLoc = (function (jspsych) {
         // accuracy: first key is change second is no change
 
         if (trial.change){
-          let correct_answer = trial.keys[0]
+          var correct_answer = trial.keys[0];
         }else{
-          let correct_answer = trial.keys[1]
+          var correct_answer = trial.keys[1];
         }
 
         let accuracy = key === correct_answer;
