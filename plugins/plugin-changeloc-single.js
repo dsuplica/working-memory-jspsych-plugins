@@ -162,6 +162,16 @@ var jsPsychChangeLoc = (function (jspsych) {
         type: jspsych.ParameterType.STRING,
         default: "change_localization",
       },
+      /** graphic parameters */
+      graphics: {
+        type: jspsych.ParameterType.OBJECT,
+        default: {
+          canvasSize: 600,
+          edge_buffer: 100,
+          stim_buffer: 50,
+          stim_size: 40,
+        },
+      }      
     }
   };
 
@@ -200,10 +210,10 @@ var jsPsychChangeLoc = (function (jspsych) {
       let test_item; // new value for changed item
       let response_array = range(1, trial.set_size + 1); // array of possible responses
       const valid_responses = response_array.map(String); // array of valid responses
-      const canvasSize = 600;
-      const edge_buffer = 100;
-      const stim_buffer = 50; 
-      const stim_size = 40;
+      const canvasSize = trial.graphics.canvasSize;
+      const edge_buffer = trial.graphics.edge_buffer;
+      const stim_buffer = trial.graphics.stim_buffer;
+      const stim_size = trial.graphics.stim_size;
 
 
       // MAIN EXPERIMENT CODE

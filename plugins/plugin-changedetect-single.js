@@ -184,6 +184,16 @@ var jsPsychChangeDetection = (function (jspsych) {
         type: jspsych.ParameterType.STRING,
         default: "change_detection",
       },
+      /** graphic parameters */
+      graphics: {
+        type: jspsych.ParameterType.OBJECT,
+        default: {
+          canvasSize: 600,
+          edge_buffer: 100,
+          stim_buffer: 50,
+          stim_size: 40,
+        },
+      }
     }
   };
 
@@ -216,15 +226,14 @@ var jsPsychChangeDetection = (function (jspsych) {
           trial.set_size = trial.pos_manual.length;
       }
 
-      // VARIABLE HARDCODING. TODO: make these trial parameters
 
       let test_index; // index of item to be changed
       let test_item; // new value for changed item
 
-      const canvasSize = 600;
-      const edge_buffer = 100;
-      const stim_buffer = 50; 
-      const stim_size = 40;
+      const canvasSize = trial.graphics.canvasSize;
+      const edge_buffer = trial.graphics.edge_buffer;
+      const stim_buffer = trial.graphics.stim_buffer;
+      const stim_size = trial.graphics.stim_size;
 
 
       // MAIN EXPERIMENT CODE
