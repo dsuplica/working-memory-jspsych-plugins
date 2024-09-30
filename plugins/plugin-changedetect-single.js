@@ -131,7 +131,18 @@ var jsPsychChangeDetection = (function (jspsych) {
         type: jspsych.ParameterType.OBJECT,
         pretty_name: "Response Keys",
         default: ["z","/"],
-      },      
+      },
+      
+      /** graphic parameters */
+      graphics: {
+        type: jspsych.ParameterType.OBJECT,
+        default: {
+          canvasSize: 600,
+          edge_buffer: 100,
+          stim_buffer: 50,
+          stim_size: 40,
+        },
+      }
 
     },
     data: {
@@ -184,16 +195,7 @@ var jsPsychChangeDetection = (function (jspsych) {
         type: jspsych.ParameterType.STRING,
         default: "change_detection",
       },
-      /** graphic parameters */
-      graphics: {
-        type: jspsych.ParameterType.OBJECT,
-        default: {
-          canvasSize: 600,
-          edge_buffer: 100,
-          stim_buffer: 50,
-          stim_size: 40,
-        },
-      }
+      
     }
   };
 

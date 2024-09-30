@@ -102,7 +102,18 @@ var jsPsychChangeLoc = (function (jspsych) {
         type: jspsych.ParameterType.INT,
         default: 4000,
         pretty_name: "Delay duration",
-      }
+      },
+
+      /** graphic parameters */
+      graphics: {
+        type: jspsych.ParameterType.OBJECT,
+        default: {
+          canvasSize: 600,
+          edge_buffer: 100,
+          stim_buffer: 50,
+          stim_size: 40,
+        },
+      }         
 
 
     },
@@ -162,16 +173,7 @@ var jsPsychChangeLoc = (function (jspsych) {
         type: jspsych.ParameterType.STRING,
         default: "change_localization",
       },
-      /** graphic parameters */
-      graphics: {
-        type: jspsych.ParameterType.OBJECT,
-        default: {
-          canvasSize: 600,
-          edge_buffer: 100,
-          stim_buffer: 50,
-          stim_size: 40,
-        },
-      }      
+   
     }
   };
 
