@@ -132,7 +132,7 @@ var jsPsychChangeDetection = (function (jspsych) {
         pretty_name: "Response Keys",
         default: ["z","/"],
       },
-      
+
       /** graphic parameters */
       graphics: {
         type: jspsych.ParameterType.OBJECT,
@@ -142,6 +142,12 @@ var jsPsychChangeDetection = (function (jspsych) {
           stim_buffer: 50,
           stim_size: 40,
         },
+      },
+
+      /** Whether to show feedback */
+      do_feedback: {
+        type: jspsych.ParameterType.BOOL,
+        default: false
       }
 
     },
@@ -256,7 +262,7 @@ var jsPsychChangeDetection = (function (jspsych) {
         "'/canvas>";
 
       //CREATE FABRIC OBJECT//
-      let canvas = new fabric.Canvas("c");
+      var canvas = new fabric.Canvas("c");
       canvas.set({
         renderOnAddRemove: false,
         selection: false,
@@ -328,7 +334,7 @@ var jsPsychChangeDetection = (function (jspsych) {
           // Add the position to the array if it passes the check
           position_array.push([x, y]);
       }
-    }
+      }
 
 
     // CREATE STIMULI
@@ -521,7 +527,7 @@ var jsPsychChangeDetection = (function (jspsych) {
       end_trial(info.key,info.rt)
     }
 
-      const end_trial = (key,rt) => {
+    const end_trial = (key,rt) => {
 
         // remove event listeners
         $(document).unbind();
@@ -552,9 +558,45 @@ var jsPsychChangeDetection = (function (jspsych) {
 
         };
         console.log(trial_data)
-        // end trial and go to next
-        this.jsPsych.finishTrial(trial_data);
+        // display feedback
+
+        if (trial.do_feedback){
+          canvas.getObjects().forEach((o) => {
+            canvas.remove(o);
+            
+          });
+          canvas.requestRenderAll();
+
+          let feedback_text = accuracy ? "Correct" : "Incorrect";
+          console.log(feedback_text)
+
+          let feedback = new fabric.Text(feedback_text, {
+            id: "feedback",
+            fill: "#FFFFFF",
+            fontSize: 50,
+            hasBorders: false,
+            hasControls: false,
+            hoverCursor: "default",
+            lockMovementX: true,
+            lockMovementY: true,
+          });
+          canvas.add(feedback);
+          feedback.center();
+
+          canvas.requestRenderAll()
+        
+
+          this.jsPsych.pluginAPI.setTimeout(function () {
+            canvas.remove(feedback);
+            canvas.requestRenderAll()
+            this.jsPsych.finishTrial(trial_data);
+
+          },500);
+      }else{
+          // end trial and go to next
+          this.jsPsych.finishTrial(trial_data);
       }
+    }
     }
   }
   ChangeDetectionPlugin.info = info;

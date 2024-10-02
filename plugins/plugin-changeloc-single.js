@@ -113,7 +113,13 @@ var jsPsychChangeLoc = (function (jspsych) {
           stim_buffer: 50,
           stim_size: 40,
         },
-      }         
+      },
+      
+      /** Whether to show feedback */
+      do_feedback: {
+        type: jspsych.ParameterType.BOOL,
+        default: false
+      } 
 
 
     },
@@ -540,9 +546,47 @@ var jsPsychChangeLoc = (function (jspsych) {
 
         };
         console.log(trial_data)
-        // end trial and go to next
-        this.jsPsych.finishTrial(trial_data);
+
+        // display feedback
+
+        if (trial.do_feedback){
+          canvas.getObjects().forEach((o) => {
+            canvas.remove(o);
+            
+          });
+          canvas.requestRenderAll();
+
+          let feedback_text = accuracy ? "Correct" : "Incorrect";
+          console.log(feedback_text)
+
+          let feedback = new fabric.Text(feedback_text, {
+            id: "feedback",
+            fill: "#FFFFFF",
+            fontSize: 50,
+            hasBorders: false,
+            hasControls: false,
+            hoverCursor: "default",
+            lockMovementX: true,
+            lockMovementY: true,
+          });
+          canvas.add(feedback);
+          feedback.center();
+
+          canvas.requestRenderAll()
+        
+
+          this.jsPsych.pluginAPI.setTimeout(function () {
+            canvas.remove(feedback);
+            canvas.requestRenderAll()
+            this.jsPsych.finishTrial(trial_data);
+
+          },500);
+      }else{
+          // end trial and go to next
+          this.jsPsych.finishTrial(trial_data);
       }
+        // end trial and go to next
+    }
     }
   }
   ChangeLocPlugin.info = info;
