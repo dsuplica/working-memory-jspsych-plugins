@@ -466,7 +466,7 @@ var jsPsychChangeLoc = (function (jsPsych) {
       }
 
       // event listener
-      var keyboard_listener = jsPsych.pluginAPI.getKeyboardResponse({
+      var keyboard_listener = this.jsPsych.pluginAPI.getKeyboardResponse({
         callback_function: afterResponse,
         valid_responses: valid_responses,
         rt_method: "performance",
