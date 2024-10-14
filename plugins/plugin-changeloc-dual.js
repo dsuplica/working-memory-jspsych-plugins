@@ -183,7 +183,7 @@ var jsPsychChangeLocDual = (function (jsPsych) {
 
       /** graphic parameters */
       graphics: {
-        type: jspsych.ParameterType.OBJECT,
+        type: jsPsych.ParameterType.OBJECT,
         default: {
           canvasSize: 600,
           edge_buffer: 100,

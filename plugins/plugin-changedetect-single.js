@@ -35,7 +35,7 @@ function randChoice(arr){
 
 
 
-var jsPsychChangeDetection = (function (jspsych) {
+var jsPsychChangeDetection = (function (jsPsych) {
   "use strict";
   
   const info = {
@@ -45,20 +45,20 @@ var jsPsychChangeDetection = (function (jspsych) {
 
       /** The duration of fixation prior to stimulus presentation */
       fixation_duration: {
-        type: jspsych.ParameterType.INT,
+        type: jsPsych.ParameterType.INT,
         default: 1000,
         pretty_name: "Fixation duration",
       },
       /** The number of TOTAL stimuli to show in the stimulus display*/
       set_size: {
-        type: jspsych.ParameterType.INT,
+        type: jsPsych.ParameterType.INT,
         default: 6,
         pretty_name: "Number of stimuli",
       },
 
       /** Stimuli which can appear. Either hex colors or paths to images */
       stimuli: {
-        type: jspsych.ParameterType.OBJECT,
+        type: jsPsych.ParameterType.OBJECT,
         pretty_name: "Stimuli",
         default: [
           "#c9281c",
@@ -74,7 +74,7 @@ var jsPsychChangeDetection = (function (jspsych) {
 
       /** Stimuli to present in the trial (override) */
       stim_manual: {
-        type: jspsych.ParameterType.OBJECT,
+        type: jsPsych.ParameterType.OBJECT,
         pretty_name: "Manually set stimuli",
         default: [],
       },
@@ -82,14 +82,14 @@ var jsPsychChangeDetection = (function (jspsych) {
       /** Locations to present stimuli at during the trial (override) */
 
       pos_manual: {
-        type: jspsych.ParameterType.OBJECT,
+        type: jsPsych.ParameterType.OBJECT,
         pretty_name: "Manually set positions",
         default: [],
       },
 
       /** The duration of the stimulus display */
       stim_duration: {
-        type: jspsych.ParameterType.INT,
+        type: jsPsych.ParameterType.INT,
         default: 250,
         pretty_name: "Stimulus duration",
       },
@@ -97,14 +97,14 @@ var jsPsychChangeDetection = (function (jspsych) {
       /** the duration of the delay period (ms) */
 
       delay_duration: {
-        type: jspsych.ParameterType.INT,
+        type: jsPsych.ParameterType.INT,
         default: 1000,
         pretty_name: "Delay duration",
       },
 
       /** Probe stimulus to present (override) */
       probe_manual: {
-        type: jspsych.ParameterType.STRING,
+        type: jsPsych.ParameterType.STRING,
         pretty_name: "Manual probe",
         default: null,
       },
@@ -112,7 +112,7 @@ var jsPsychChangeDetection = (function (jspsych) {
       /** Locations to present stimuli at during the trial (override) */
 
       probe_pos_manual: {
-        type: jspsych.ParameterType.OBJECT,
+        type: jsPsych.ParameterType.OBJECT,
         pretty_name: "Manual probe position",
         default: [],
       },
@@ -120,7 +120,7 @@ var jsPsychChangeDetection = (function (jspsych) {
       /** Whether the test stimulus should be the same or different as the previous one (override) */
 
       change: {
-        type: jspsych.ParameterType.BOOL,
+        type: jsPsych.ParameterType.BOOL,
         pretty_name: "Change",
         default: null,
       },
@@ -128,14 +128,14 @@ var jsPsychChangeDetection = (function (jspsych) {
       /** Response keys to press. First key is no change, second is change */
 
       keys: {
-        type: jspsych.ParameterType.OBJECT,
+        type: jsPsych.ParameterType.OBJECT,
         pretty_name: "Response Keys",
         default: ["z","/"],
       },
 
       /** graphic parameters */
       graphics: {
-        type: jspsych.ParameterType.OBJECT,
+        type: jsPsych.ParameterType.OBJECT,
         default: {
           canvasSize: 600,
           edge_buffer: 100,
@@ -146,7 +146,7 @@ var jsPsychChangeDetection = (function (jspsych) {
 
       /** Whether to show feedback */
       do_feedback: {
-        type: jspsych.ParameterType.BOOL,
+        type: jsPsych.ParameterType.BOOL,
         default: false
       }
 
@@ -154,51 +154,51 @@ var jsPsychChangeDetection = (function (jspsych) {
     data: {
       /** Response key pressed */
       key: {
-        type: jspsych.ParameterType.KEY,
+        type: jsPsych.ParameterType.KEY,
       },
 
       /** Reaction Time */
       rt: {
-        type: jspsych.ParameterType.INT,
+        type: jsPsych.ParameterType.INT,
       },
 
       /** Stims presented */
       stimuli: {
-        type: jspsych.ParameterType.OBJECT,
+        type: jsPsych.ParameterType.OBJECT,
       },
 
       /** Stim positions */
       positions: {
-        type: jspsych.ParameterType.OBJECT,
+        type: jsPsych.ParameterType.OBJECT,
       },
 
       /** Index of the test */
       test_index: {
-        type: jspsych.ParameterType.INT,
+        type: jsPsych.ParameterType.INT,
       },
       /** Test item */
       test_item: {
-        type: jspsych.ParameterType.STRING,
+        type: jsPsych.ParameterType.STRING,
       },
       /** Correct answer */
       correct_answer: {
-        type: jspsych.ParameterType.STRING,
+        type: jsPsych.ParameterType.STRING,
       },
       /** Number of stimuli */
       set_size: {
-        type: jspsych.ParameterType.INT,
+        type: jsPsych.ParameterType.INT,
       },
       /** Change present? */
       change: {
-        type: jspsych.ParameterType.BOOL,
+        type: jsPsych.ParameterType.BOOL,
       },
       /** Accuracy */
       accuracy: {
-        type: jspsych.ParameterType.BOOL,
+        type: jsPsych.ParameterType.BOOL,
       },
       /** Name of trial */
       trial_exp: {
-        type: jspsych.ParameterType.STRING,
+        type: jsPsych.ParameterType.STRING,
         default: "change_detection",
       },
       
@@ -214,7 +214,7 @@ var jsPsychChangeDetection = (function (jspsych) {
    * Can run with colors or images
    *
    * @author Darius Suplica
-   * @see {@link {https://github.com/dsuplica/working-memory-jspsych-plugins}}
+   * @see {@link {https://github.com/dsuplica/working-memory-jsPsych-plugins}}
    */
   class ChangeDetectionPlugin {
     constructor(jsPsych) {
@@ -249,12 +249,12 @@ var jsPsychChangeDetection = (function (jspsych) {
 
       //CREATE CANVAS OBJECT//
       display_element.innerHTML =
-      "<div id='jspsych-changedetect-plugin' style='position: relative; width:" +
+      "<div id='jsPsych-changedetect-plugin' style='position: relative; width:" +
       canvasSize +
       "px; height:" +
       canvasSize +
       "px'></div>";
-      display_element.querySelector("#jspsych-changedetect-plugin").innerHTML +=
+      display_element.querySelector("#jsPsych-changedetect-plugin").innerHTML +=
         "<canvas id='c', width = '" +
         canvasSize +
         "', height = '" +

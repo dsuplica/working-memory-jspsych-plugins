@@ -31,7 +31,7 @@ function shuffleArray(arr){
 
 
 // code is based on Temilade Adekoya's plugin-ChangeLoc plugin
-var jsPsychChangeLoc = (function (jspsych) {
+var jsPsychChangeLoc = (function (jsPsych) {
   "use strict";
   
   const info = {
@@ -47,20 +47,20 @@ var jsPsychChangeLoc = (function (jspsych) {
 
       /** The duration of fixation prior to stimulus presentation */
       fixation_duration: {
-        type: jspsych.ParameterType.INT,
+        type: jsPsych.ParameterType.INT,
         default: 1000,
         pretty_name: "Fixation duration",
       },
       /** The number of TOTAL stimuli to show in the stimulus display*/
       set_size: {
-        type: jspsych.ParameterType.INT,
+        type: jsPsych.ParameterType.INT,
         default: 6,
         pretty_name: "Number of stimuli",
       },
 
       /** Stimuli which can appear. Either hex colors or paths to images */
       stimuli: {
-        type: jspsych.ParameterType.OBJECT,
+        type: jsPsych.ParameterType.OBJECT,
         pretty_name: "Stimuli",
         default: [
           "#c9281c",
@@ -76,7 +76,7 @@ var jsPsychChangeLoc = (function (jspsych) {
 
       /** Stimuli to present in the trial (overrides random selection) */
       stim_manual: {
-        type: jspsych.ParameterType.OBJECT,
+        type: jsPsych.ParameterType.OBJECT,
         pretty_name: "Manually set stimuli",
         default: [],
       },
@@ -84,14 +84,14 @@ var jsPsychChangeLoc = (function (jspsych) {
       /** Locations to present stimuli at during the trial (overrides random selection) */
 
       pos_manual: {
-        type: jspsych.ParameterType.OBJECT,
+        type: jsPsych.ParameterType.OBJECT,
         pretty_name: "Manually set positions",
         default: [],
       },
 
       /** The duration of the stimulus display */
       stim_duration: {
-        type: jspsych.ParameterType.INT,
+        type: jsPsych.ParameterType.INT,
         default: 250,
         pretty_name: "Stimulus duration",
       },
@@ -99,14 +99,14 @@ var jsPsychChangeLoc = (function (jspsych) {
       /** the duration of the delay period (ms) */
 
       delay_duration: {
-        type: jspsych.ParameterType.INT,
+        type: jsPsych.ParameterType.INT,
         default: 4000,
         pretty_name: "Delay duration",
       },
 
       /** graphic parameters */
       graphics: {
-        type: jspsych.ParameterType.OBJECT,
+        type: jsPsych.ParameterType.OBJECT,
         default: {
           canvasSize: 600,
           edge_buffer: 100,
@@ -117,7 +117,7 @@ var jsPsychChangeLoc = (function (jspsych) {
       
       /** Whether to show feedback */
       do_feedback: {
-        type: jspsych.ParameterType.BOOL,
+        type: jsPsych.ParameterType.BOOL,
         default: false
       } 
 
@@ -126,57 +126,57 @@ var jsPsychChangeLoc = (function (jspsych) {
     data: {
       /** name of this trial */
       trial_exp: {
-        type: jspsych.ParameterType.STRING,
+        type: jsPsych.ParameterType.STRING,
       },
 
       /** Response key pressed */
       key: {
-        type: jspsych.ParameterType.KEY,
+        type: jsPsych.ParameterType.KEY,
       },
 
       /** Reaction Time */
       rt: {
-        type: jspsych.ParameterType.INT,
+        type: jsPsych.ParameterType.INT,
       },
 
       /** Stims presented */
       stimuli: {
-        type: jspsych.ParameterType.OBJECT,
+        type: jsPsych.ParameterType.OBJECT,
       },
 
       /** Stim positions */
       positions: {
-        type: jspsych.ParameterType.OBJECT,
+        type: jsPsych.ParameterType.OBJECT,
       },
 
       /** Index of the test */
       test_index: {
-        type: jspsych.ParameterType.INT,
+        type: jsPsych.ParameterType.INT,
       },
       /** Test item */
       test_item: {
-        type: jspsych.ParameterType.STRING,
+        type: jsPsych.ParameterType.STRING,
       },
       /** Correct answer */
       correct_answer: {
-        type: jspsych.ParameterType.STRING,
+        type: jsPsych.ParameterType.STRING,
       },
       /** Array of responses */
       response_array: {
-        type: jspsych.ParameterType.OBJECT,
+        type: jsPsych.ParameterType.OBJECT,
         default: [],
       },
       /** Number of stimuli */
       set_size: {
-        type: jspsych.ParameterType.INT,
+        type: jsPsych.ParameterType.INT,
       },
       /** Accuracy */
       accuracy: {
-        type: jspsych.ParameterType.BOOL,
+        type: jsPsych.ParameterType.BOOL,
       },
       /** Name of trial */
       trial_exp: {
-        type: jspsych.ParameterType.STRING,
+        type: jsPsych.ParameterType.STRING,
         default: "change_localization",
       },
    
@@ -192,7 +192,7 @@ var jsPsychChangeLoc = (function (jspsych) {
    * Can run with colors or images
    *
    * @author Darius Suplica
-   * @see {@link {https://github.com/dsuplica/change-localization-jspsych-plugins}}
+   * @see {@link {https://github.com/dsuplica/change-localization-jsPsych-plugins}}
    */
   class ChangeLocPlugin {
     constructor(jsPsych) {
@@ -229,12 +229,12 @@ var jsPsychChangeLoc = (function (jspsych) {
 
       //CREATE CANVAS OBJECT//
       display_element.innerHTML =
-      "<div id='jspsych-changeloc-plugin' style='position: relative; width:" +
+      "<div id='jsPsych-changeloc-plugin' style='position: relative; width:" +
       canvasSize +
       "px; height:" +
       canvasSize +
       "px'></div>";
-      display_element.querySelector("#jspsych-changeloc-plugin").innerHTML +=
+      display_element.querySelector("#jsPsych-changeloc-plugin").innerHTML +=
         "<canvas id='c', width = '" +
         canvasSize +
         "', height = '" +
