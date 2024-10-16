@@ -282,14 +282,21 @@ var jsPsychChangeLoc = (function (jsPsych) {
         const stim_diag = Math.sqrt(2) * stim_size; // diagonal distance
 
         let i = 0;
+        let loop_counter = 0;
         position_loop:
         while (position_array.length < trial.set_size) {
           i++;
 
           // avoid infinite while loop
-          if (i>100){
+          if (i>1000){
+            if (loop_counter > 1000) {
+              // this exists so we don't get stuck in an infinite loop. This is bad if it runs
+              alert('POSITION ASSIGNMENT ERROR: Please contact your experimenter.')
+              throw new Error("Could not find valid positions")
+            }
             position_array = [];
             i = 0;
+            loop_counter++;
             continue position_loop; // restart loop
           }
 
