@@ -392,138 +392,64 @@ var jsPsychChangeLocDual = (function (jsPsych) {
         canvas.requestRenderAll();
       }
 
+      // function to assign positions
 
-      // GET POSITION ARRAYS
+      const assign_positions = (set_size,manual,max_repeats = 1000) => {
+        return new Promise((resolve, reject) => {
 
+          let position_array = [];
 
-      let position_array_1 = [];
-
-      // if manual positions are set, use those
-      if (trial.pos_manual_1.length > 0) {
-        for (let i = 0; i < trial.set_size_1; i++) {
-          position_array_1.push(trial.pos_manual_1[i]);
-        }
-      } else {
-        const stim_diag = Math.sqrt(2) * stim_size; // diagonal distance
-
-        let i = 0;
-        position_loop:
-        while (position_array_1.length < trial.set_size_1) {
-
-          i++;
-          // avoid infinite while loop
-          if (i>100){
-            position_array = [];
-            i = 0;
-            continue position_loop; // restart loop
+          if (manual.length > 0) {
+            for (let i = 0; i < set_size; i++) {
+              position_array.push(manual[i])
+            }
+            
+            resolve(position_array);
           }
 
-          let x = randomInt(edge_buffer, canvasSize - edge_buffer);
-          let y = randomInt(edge_buffer, canvasSize - edge_buffer);
-          let x2;
-          let y2;
+          const stim_diag = Math.sqrt(2) * stim_size / 2; // diagonal distance
+          let i = 0;
+          let loop_counter = 0;
 
-          if (dist_between_points(x, y, 0, 0) < stim_diag * 3 + stim_buffer) {
-            continue position_loop; // too close to center
-          }
+          position_loop:
+          while (position_array.length < set_size) {
+            i++;
+            // avoid infinite while loop
+            if (i>max_repeats){
+              if (loop_counter > 1000) {
+                // this exists so we don't get stuck in an infinite loop. This is bad if it runs
+                alert('POSITION ASSIGNMENT ERROR: Please contact your experimenter.')
+                throw new Error("Could not find valid positions")
+              }
 
-          if (position_array_1.length > 0) {
-            for ([x2, y2] of position_array_1) {
-              if (dist_between_points(x, y, x2, y2) < stim_diag * 2 + stim_buffer) {
-                continue position_loop; // too close to another stimulus
+              position_array = [];
+              i = 0;
+              loop_counter++;
+              continue position_loop; // restart loop
+            }
+
+            let x = randomInt(edge_buffer, canvasSize - edge_buffer);
+            let y = randomInt(edge_buffer, canvasSize - edge_buffer);
+            let x2;
+            let y2;
+
+            if (dist_between_points(x, y, 0, 0) < stim_diag * 4 + stim_buffer) {
+              continue position_loop; // too close to center
+            }
+
+            if (position_array.length > 0) {
+              for ([x2, y2] of position_array) {
+                if (dist_between_points(x, y, x2, y2) < stim_diag * 2 + stim_buffer) {
+                  continue position_loop; // too close to another stimulus
+                }
               }
             }
+            // Add the position to the array if it passes the check
+            position_array.push([x, y]);
           }
-
-          // Add the position to the array if it passes the check
-          position_array_1.push([x, y]);
-        }
+          resolve(position_array);
+        });
       }
-
-
-      // CREATE STIMULI
-
-      let stimulus_array_1 = [];
-      let stims_shuff_1 = shuffleArray(trial.stimuli_1);
-
-
-      // if manual stimuli are set, use those
-      if (trial.stim_manual_1.length > 0) {
-        for (let i = 0; i < trial.set_size_1; i++) {
-          stimulus_array_1.push(trial.stim_manual_1[i]);
-        }
-      } else {
-        for (let i = 0; i < trial.set_size_1; i++) { // append stimuli (should be already shuffled)
-          stimulus_array_1.push(stims_shuff_1[i]);
-        }
-      }
-
-      // do it all again for the second stimulus type
-
-      let position_array_2 = [];
-
-      // if manual positions are set, use those
-      if (trial.pos_manual_2.length > 0) {
-        for (let i = 0; i < trial.set_size_2; i++) {
-          position_array_2.push(trial.pos_manual_2[i]);
-        }
-      } else {
-        const stim_diag = Math.sqrt(2) * stim_size; // diagonal distance
-
-        let i=0;
-        position_loop:
-        while (position_array_2.length < trial.set_size_2) {
-          
-          i++;
-          // avoid infinite while loop
-          if (i>100){
-            position_array = [];
-            i = 0;
-            continue position_loop; // restart loop
-          }
-
-          let x = randomInt(edge_buffer, canvasSize - edge_buffer);
-          let y = randomInt(edge_buffer, canvasSize - edge_buffer);
-          let x2;
-          let y2;
-
-          if (dist_between_points(x, y, 0, 0) < stim_diag * 3 + stim_buffer) {
-            continue position_loop; // too close to center
-          }
-
-          if (position_array_2.length > 0) {
-            for ([x2, y2] of position_array_2) {
-              if (dist_between_points(x, y, x2, y2) < stim_diag * 2 + stim_buffer) {
-                continue position_loop; // too close to another stimulus
-              }
-            }
-          }
-
-          // Add the position to the array if it passes the check
-          position_array_2.push([x, y]);
-        }
-      }
-
-
-      // CREATE STIMULI
-
-      let stimulus_array_2 = [];
-      let stims_shuff_2 = shuffleArray(trial.stimuli_2);
-
-
-      // if manual stimuli are set, use those
-      if (trial.stim_manual_2.length > 0) {
-        for (let i = 0; i < trial.set_size_2; i++) {
-          stimulus_array_2.push(trial.stim_manual_2[i]);
-        }
-      } else {
-        for (let i = 0; i < trial.set_size_2; i++) { // append stimuli (should be already shuffled)
-          stimulus_array_2.push(stims_shuff_2[i]);
-        }
-      }
-
-
-
 
       // drawing functions, basically straight copy paste
 
@@ -677,6 +603,48 @@ var jsPsychChangeLocDual = (function (jsPsych) {
 
       const trial_procedure = async () => {
 
+      // CREATE STIMULI for set 1
+
+      let stimulus_array_1 = [];
+      let stims_shuff_1 = shuffleArray(trial.stimuli_1);
+
+      // if manual stimuli are set, use those
+      if (trial.stim_manual_1.length > 0) {
+        for (let i = 0; i < trial.set_size_1; i++) {
+          stimulus_array_1.push(trial.stim_manual_1[i]);
+        }
+      } else {
+        for (let i = 0; i < trial.set_size_1; i++) { // append stimuli (should be already shuffled)
+          stimulus_array_1.push(stims_shuff_1[i]);
+        }
+      }
+
+      // CREATE STIMULI for set 2
+
+      let stimulus_array_2 = [];
+      let stims_shuff_2 = shuffleArray(trial.stimuli_2);
+
+
+      // if manual stimuli are set, use those
+      if (trial.stim_manual_2.length > 0) {
+        for (let i = 0; i < trial.set_size_2; i++) {
+          stimulus_array_2.push(trial.stim_manual_2[i]);
+        }
+      } else {
+        for (let i = 0; i < trial.set_size_2; i++) { // append stimuli (should be already shuffled)
+          stimulus_array_2.push(stims_shuff_2[i]);
+        }
+      }
+
+      // GET POSITION ARRAYS
+
+      let position_array_1;
+      let position_array_2;
+
+      [position_array_1, position_array_2] = await Promise.all([
+        assign_positions(trial.set_size_1,trial.pos_manual_1),
+        assign_positions(trial.set_size_2,trial.pos_manual_2)]);
+
         // initialize trial_data for use later
         let trial_data = [
           {
@@ -791,7 +759,7 @@ var jsPsychChangeLocDual = (function (jsPsych) {
         });
       }
 
-      // call trial
+      // start the trial
       trial_procedure();
       
 
