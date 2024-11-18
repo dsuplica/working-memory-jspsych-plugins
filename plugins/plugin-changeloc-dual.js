@@ -433,7 +433,7 @@ var jsPsychChangeLocDual = (function (jsPsych) {
             let x2;
             let y2;
 
-            if (dist_between_points(x, y, 0, 0) < stim_diag * 4 + stim_buffer) {
+            if (dist_between_points(x, y, canvasSize/2, canvasSize/2) < stim_diag + stim_buffer) {
               continue position_loop; // too close to center
             }
 
