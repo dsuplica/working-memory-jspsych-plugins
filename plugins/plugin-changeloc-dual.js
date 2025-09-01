@@ -2,7 +2,7 @@
 
 // simple range
 function range(start = 0, end) {
-  return [...Array(end - start).keys()].map(i => i + start);
+  return [...Array(end - start).keys()].map((i) => i + start);
 }
 
 // random number between min and max
@@ -18,7 +18,7 @@ function dist_between_points(x1, y1, x2, y2) {
 // Fisher-Yates shuffle
 
 function shuffleArray(arr) {
-  ixs = [...Array(arr.length).keys()]
+  ixs = [...Array(arr.length).keys()];
   let newArr = [];
   while (ixs.length) {
     let i = Math.floor(Math.random() * ixs.length);
@@ -27,12 +27,9 @@ function shuffleArray(arr) {
   return newArr;
 }
 
-function randChoice(arr){
-  return arr[Math.floor(Math.random()*arr.length)];
+function randChoice(arr) {
+  return arr[Math.floor(Math.random() * arr.length)];
 }
-
-
-
 
 // code is based on Temilade Adekoya's plugin-ChangeLoc plugin
 var jsPsychChangeLocDual = (function (jsPsych) {
@@ -42,14 +39,12 @@ var jsPsychChangeLocDual = (function (jsPsych) {
     name: "ChangeLocalizationPlugin",
     version: "1.0.0", // When working in a Javascript environment with no build, you will need to manually put set the version information. This is used for metadata purposes and publishing.
     parameters: {
-
       /** The duration of INITIAL fixation prior to stimulus presentation */
       fixation_duration: {
         type: jsPsych.ParameterType.INT,
         default: 1000,
         pretty_name: "Fixation duration",
       },
-
 
       /** Set size for first stimulus set*/
       set_size_1: {
@@ -73,7 +68,6 @@ var jsPsychChangeLocDual = (function (jsPsych) {
           "#FFFFFF",
         ],
       },
-
 
       /** Stimuli to present in set 1 (overrides random selection) */
       stim_manual_1: {
@@ -104,8 +98,6 @@ var jsPsychChangeLocDual = (function (jsPsych) {
         pretty_name: "Interstimulus interval",
       },
 
-
-
       /** Set size for second stimulus set*/
       set_size_2: {
         type: jsPsych.ParameterType.INT,
@@ -129,7 +121,6 @@ var jsPsychChangeLocDual = (function (jsPsych) {
         ],
       },
 
-
       /** Stimuli to present in set 2 (overrides random selection) */
       stim_manual_2: {
         type: jsPsych.ParameterType.OBJECT,
@@ -152,7 +143,6 @@ var jsPsychChangeLocDual = (function (jsPsych) {
         pretty_name: "Stimulus duration",
       },
 
-
       /** the duration of the delay period (ms) */
 
       delay_duration: {
@@ -164,7 +154,7 @@ var jsPsychChangeLocDual = (function (jsPsych) {
       /** the order in which to probe each set */
       probe_order: {
         type: jsPsych.ParameterType.OBJECT,
-        default: [0,1],
+        default: [0, 1],
         pretty_name: "Probe order",
       },
       /** The delay between probes */
@@ -190,9 +180,7 @@ var jsPsychChangeLocDual = (function (jsPsych) {
           stim_buffer: 50,
           stim_size: 40,
         },
-      }      
-
-
+      },
     },
     data: {
       /** name of this trial */
@@ -250,7 +238,7 @@ var jsPsychChangeLocDual = (function (jsPsych) {
       accuracy_1: {
         type: jsPsych.ParameterType.BOOL,
       },
-      
+
       /** Response key pressed */
       key_2: {
         type: jsPsych.ParameterType.KEY,
@@ -296,10 +284,8 @@ var jsPsychChangeLocDual = (function (jsPsych) {
       accuracy_2: {
         type: jsPsych.ParameterType.BOOL,
       },
-      
-    }
+    },
   };
-
 
   /**
    * **{plugin-changeloc-single}**
@@ -316,12 +302,14 @@ var jsPsychChangeLocDual = (function (jsPsych) {
       this.jsPsych = jsPsych;
     }
 
-
     trial(display_element, trial) {
-
       // CHECKS IF OVERRIDES ARE SET and set set_size appropriately if so
 
-      if (trial.stim_manual_1.length > 0 && trial.pos_manual_1.length > 0 && trial.stim_manual_1.length !== trial.pos_manual_1.length) {
+      if (
+        trial.stim_manual_1.length > 0 &&
+        trial.pos_manual_1.length > 0 &&
+        trial.stim_manual_1.length !== trial.pos_manual_1.length
+      ) {
         throw new Error("Stimulus array length does not match set size");
       } else if (trial.stim_manual_1.length > 0) {
         trial.set_size_1 = trial.stim_manual_1.length;
@@ -329,7 +317,11 @@ var jsPsychChangeLocDual = (function (jsPsych) {
         trial.set_size_1 = trial.pos_manual_1.length;
       }
 
-      if (trial.stim_manual_2.length > 0 && trial.pos_manual_2.length > 0 && trial.stim_manual_2.length !== trial.pos_manual_2.length) {
+      if (
+        trial.stim_manual_2.length > 0 &&
+        trial.pos_manual_2.length > 0 &&
+        trial.stim_manual_2.length !== trial.pos_manual_2.length
+      ) {
         throw new Error("Stimulus array length does not match set size");
       } else if (trial.stim_manual_2.length > 0) {
         trial.set_size_2 = trial.stim_manual_2.length;
@@ -341,17 +333,14 @@ var jsPsychChangeLocDual = (function (jsPsych) {
 
       let response_array_1 = range(1, trial.set_size_1 + 1); // array of possible responses
 
-
-      let response_array_2 = range(1, trial.set_size_2 + 1); 
+      let response_array_2 = range(1, trial.set_size_2 + 1);
 
       const canvasSize = trial.graphics.canvasSize;
       const edge_buffer = trial.graphics.edge_buffer;
       const stim_buffer = trial.graphics.stim_buffer;
       const stim_size = trial.graphics.stim_size;
 
-
       // MAIN EXPERIMENT CODE
-
 
       //CREATE CANVAS OBJECT//
       display_element.innerHTML =
@@ -394,32 +383,32 @@ var jsPsychChangeLocDual = (function (jsPsych) {
 
       // function to assign positions
 
-      const assign_positions = (set_size,manual,max_repeats = 1000) => {
+      const assign_positions = (set_size, manual, max_repeats = 1000) => {
         return new Promise((resolve, reject) => {
-
           let position_array = [];
 
           if (manual.length > 0) {
             for (let i = 0; i < set_size; i++) {
-              position_array.push(manual[i])
+              position_array.push(manual[i]);
             }
-            
+
             resolve(position_array);
           }
 
-          const stim_diag = Math.sqrt(2) * stim_size / 2; // diagonal distance
+          const stim_diag = (Math.sqrt(2) * stim_size) / 2; // diagonal distance
           let i = 0;
           let loop_counter = 0;
 
-          position_loop:
-          while (position_array.length < set_size) {
+          position_loop: while (position_array.length < set_size) {
             i++;
             // avoid infinite while loop
-            if (i>max_repeats){
+            if (i > max_repeats) {
               if (loop_counter > 1000) {
                 // this exists so we don't get stuck in an infinite loop. This is bad if it runs
-                alert('POSITION ASSIGNMENT ERROR: Please contact your experimenter.')
-                throw new Error("Could not find valid positions")
+                alert(
+                  "POSITION ASSIGNMENT ERROR: Please contact your experimenter."
+                );
+                throw new Error("Could not find valid positions");
               }
 
               position_array = [];
@@ -433,13 +422,19 @@ var jsPsychChangeLocDual = (function (jsPsych) {
             let x2;
             let y2;
 
-            if (dist_between_points(x, y, canvasSize/2, canvasSize/2) < stim_diag + stim_buffer) {
+            if (
+              dist_between_points(x, y, canvasSize / 2, canvasSize / 2) <
+              stim_diag + stim_buffer
+            ) {
               continue position_loop; // too close to center
             }
 
             if (position_array.length > 0) {
               for ([x2, y2] of position_array) {
-                if (dist_between_points(x, y, x2, y2) < stim_diag * 2 + stim_buffer) {
+                if (
+                  dist_between_points(x, y, x2, y2) <
+                  stim_diag * 2 + stim_buffer
+                ) {
                   continue position_loop; // too close to another stimulus
                 }
               }
@@ -449,13 +444,11 @@ var jsPsychChangeLocDual = (function (jsPsych) {
           }
           resolve(position_array);
         });
-      }
+      };
 
       // drawing functions, basically straight copy paste
 
-
       const draw_colored_square = (color, pos, label) => {
-
         return new Promise(async (resolve, reject) => {
           var rect = new fabric.Rect({
             width: stim_size,
@@ -511,7 +504,6 @@ var jsPsychChangeLocDual = (function (jsPsych) {
             canvas.requestRenderAll();
 
             if (label) {
-
               // ADD NUMBER LABEL
               var label_object = new fabric.Text(label.toString(), {
                 left: pos[0] - stim_size / 4, // shift to convert from center to left and top
@@ -544,106 +536,123 @@ var jsPsychChangeLocDual = (function (jsPsych) {
         }
       };
 
-      const clear_screen = () => { // remove all stimuli on screen
+      const clear_screen = () => {
+        // remove all stimuli on screen
         canvas.getObjects().forEach((o) => {
           if (!o.id) {
             canvas.remove(o);
           }
         });
         canvas.requestRenderAll();
-
-      }
-
+      };
 
       // function to assign, present, and return test
-      const present_test = async (stimulus_array,position_array,response_array,all_stimuli,delay) => {
+      const present_test = async (
+        stimulus_array,
+        position_array,
+        response_array,
+        all_stimuli,
+        delay
+      ) => {
         //CREATE ARRAY OF DESIRED RESPONSES & SHUFFLE
         response_array = shuffleArray(response_array);
         // get index of test item
         let test_index = randomInt(0, stimulus_array.length);
-        let test_item = randChoice(all_stimuli.filter(x => !stimulus_array.includes(x))); // get a unique value from stimuli
+        let test_item = randChoice(
+          all_stimuli.filter((x) => !stimulus_array.includes(x))
+        ); // get a unique value from stimuli
         let new_stim_array = stimulus_array.slice(); // copy array
 
         new_stim_array[test_index] = test_item;
 
         // show the initial array after waiting the delay before
         this.jsPsych.pluginAPI.setTimeout(async function () {
-          for (let istim = 0; istim < new_stim_array.length; istim++) { // show stimuli with response
+          for (let istim = 0; istim < new_stim_array.length; istim++) {
+            // show stimuli with response
             await draw_stim(new_stim_array[istim], position_array[istim]);
           }
-          this.jsPsych.pluginAPI.setTimeout(async function () { // then draw with numbers after 100ms
+          this.jsPsych.pluginAPI.setTimeout(async function () {
+            // then draw with numbers after 100ms
             for (let istim = 0; istim < new_stim_array.length; istim++) {
-              await draw_stim(new_stim_array[istim], position_array[istim], response_array[istim]);
+              await draw_stim(
+                new_stim_array[istim],
+                position_array[istim],
+                response_array[istim]
+              );
             }
-          },100);
-        },delay);
-        return [response_array,test_index,test_item];
-      }
-
+          }, 100);
+        }, delay);
+        return [response_array, test_index, test_item];
+      };
 
       // function to handle stimulus presentation and fixations before and after
-      const present_stimuli = (stimulus_array, position_array,delay,duration) => {
+      const present_stimuli = (
+        stimulus_array,
+        position_array,
+        delay,
+        duration
+      ) => {
         return new Promise(async (resolve, reject) => {
-
-        this.jsPsych.pluginAPI.setTimeout(async function () {
-          for (let istim = 0; istim < stimulus_array.length; istim++) { // show stimuli with response
-            await draw_stim(stimulus_array[istim], position_array[istim]);
-          }
-          this.jsPsych.pluginAPI.setTimeout(function () { // clear screen
-            clear_screen();
-            resolve();
-          },
-            duration);
-        },
-        delay);
-      })};
-
+          this.jsPsych.pluginAPI.setTimeout(async function () {
+            for (let istim = 0; istim < stimulus_array.length; istim++) {
+              // show stimuli with response
+              await draw_stim(stimulus_array[istim], position_array[istim]);
+            }
+            this.jsPsych.pluginAPI.setTimeout(function () {
+              // clear screen
+              clear_screen();
+              resolve();
+            }, duration);
+          }, delay);
+        });
+      };
 
       // MAIN TRIAL PROCEDURE HERE
 
       const trial_procedure = async () => {
+        // CREATE STIMULI for set 1
 
-      // CREATE STIMULI for set 1
+        let stimulus_array_1 = [];
+        let stims_shuff_1 = shuffleArray(trial.stimuli_1);
 
-      let stimulus_array_1 = [];
-      let stims_shuff_1 = shuffleArray(trial.stimuli_1);
-
-      // if manual stimuli are set, use those
-      if (trial.stim_manual_1.length > 0) {
-        for (let i = 0; i < trial.set_size_1; i++) {
-          stimulus_array_1.push(trial.stim_manual_1[i]);
+        // if manual stimuli are set, use those
+        if (trial.stim_manual_1.length > 0) {
+          for (let i = 0; i < trial.set_size_1; i++) {
+            stimulus_array_1.push(trial.stim_manual_1[i]);
+          }
+        } else {
+          for (let i = 0; i < trial.set_size_1; i++) {
+            // append stimuli (should be already shuffled)
+            stimulus_array_1.push(stims_shuff_1[i]);
+          }
         }
-      } else {
-        for (let i = 0; i < trial.set_size_1; i++) { // append stimuli (should be already shuffled)
-          stimulus_array_1.push(stims_shuff_1[i]);
+
+        // CREATE STIMULI for set 2
+
+        let stimulus_array_2 = [];
+        let stims_shuff_2 = shuffleArray(trial.stimuli_2);
+
+        // if manual stimuli are set, use those
+        if (trial.stim_manual_2.length > 0) {
+          for (let i = 0; i < trial.set_size_2; i++) {
+            stimulus_array_2.push(trial.stim_manual_2[i]);
+          }
+        } else {
+          for (let i = 0; i < trial.set_size_2; i++) {
+            // append stimuli (should be already shuffled)
+            stimulus_array_2.push(stims_shuff_2[i]);
+          }
         }
-      }
 
-      // CREATE STIMULI for set 2
+        // GET POSITION ARRAYS
 
-      let stimulus_array_2 = [];
-      let stims_shuff_2 = shuffleArray(trial.stimuli_2);
+        let position_array_1;
+        let position_array_2;
 
-
-      // if manual stimuli are set, use those
-      if (trial.stim_manual_2.length > 0) {
-        for (let i = 0; i < trial.set_size_2; i++) {
-          stimulus_array_2.push(trial.stim_manual_2[i]);
-        }
-      } else {
-        for (let i = 0; i < trial.set_size_2; i++) { // append stimuli (should be already shuffled)
-          stimulus_array_2.push(stims_shuff_2[i]);
-        }
-      }
-
-      // GET POSITION ARRAYS
-
-      let position_array_1;
-      let position_array_2;
-
-      [position_array_1, position_array_2] = await Promise.all([
-        assign_positions(trial.set_size_1,trial.pos_manual_1),
-        assign_positions(trial.set_size_2,trial.pos_manual_2)]);
+        [position_array_1, position_array_2] = await Promise.all([
+          assign_positions(trial.set_size_1, trial.pos_manual_1),
+          assign_positions(trial.set_size_2, trial.pos_manual_2),
+        ]);
 
         // initialize trial_data for use later
         let trial_data = [
@@ -671,26 +680,25 @@ var jsPsychChangeLocDual = (function (jsPsych) {
             test_index: null,
             test_item: null,
           },
-        ]
+        ];
 
         show_fixation();
 
-        // stim 1 
+        // stim 1
         await present_stimuli(
           trial_data[0].stimulus_array,
           trial_data[0].position_array,
           trial.fixation_duration,
           trial.stim_duration_1
-        )
+        );
         await present_stimuli(
-            trial_data[1].stimulus_array,
-            trial_data[1].position_array,
-            trial.isi,
-            trial.stim_duration_2
-          )
+          trial_data[1].stimulus_array,
+          trial_data[1].position_array,
+          trial.isi,
+          trial.stim_duration_2
+        );
 
         // stim 2
-        
 
         // delay and first test
 
@@ -698,7 +706,11 @@ var jsPsychChangeLocDual = (function (jsPsych) {
 
         var probe_ix = trial.probe_order[0];
 
-       [trial_data[probe_ix].response_array,trial_data[probe_ix].test_index,trial_data[probe_ix].test_item] = await present_test(
+        [
+          trial_data[probe_ix].response_array,
+          trial_data[probe_ix].test_index,
+          trial_data[probe_ix].test_item,
+        ] = await present_test(
           trial_data[probe_ix].stimulus_array,
           trial_data[probe_ix].position_array,
           trial_data[probe_ix].response_array,
@@ -709,22 +721,26 @@ var jsPsychChangeLocDual = (function (jsPsych) {
         // wait for a response here
         var keyboard_listener = this.jsPsych.pluginAPI.getKeyboardResponse({
           callback_function: async (info) => {
-
             // save out data
-            trial_data[probe_ix].key = info.key
-            trial_data[probe_ix].rt = info.rt
-            trial_data[probe_ix].correct_answer = String(trial_data[probe_ix].response_array[trial_data[probe_ix].test_index]);
-            trial_data[probe_ix].accuracy = info.key === trial_data[probe_ix].correct_answer
-
-
-
+            trial_data[probe_ix].key = info.key;
+            trial_data[probe_ix].rt = info.rt;
+            trial_data[probe_ix].correct_answer = String(
+              trial_data[probe_ix].response_array[
+                trial_data[probe_ix].test_index
+              ]
+            );
+            trial_data[probe_ix].accuracy =
+              info.key === trial_data[probe_ix].correct_answer;
 
             // then test the second probe
             clear_screen();
             probe_ix = trial.probe_order[1];
-            
 
-            [trial_data[probe_ix].response_array,trial_data[probe_ix].test_index,trial_data[probe_ix].test_item] = await present_test(
+            [
+              trial_data[probe_ix].response_array,
+              trial_data[probe_ix].test_index,
+              trial_data[probe_ix].test_item,
+            ] = await present_test(
               trial_data[probe_ix].stimulus_array,
               trial_data[probe_ix].position_array,
               trial_data[probe_ix].response_array,
@@ -732,46 +748,45 @@ var jsPsychChangeLocDual = (function (jsPsych) {
               trial.delay_duration
             );
 
-
             // second keyboard response here (sorry for ugly)
-            var keyboard_listener_2 = this.jsPsych.pluginAPI.getKeyboardResponse({
-              callback_function: async function (info) {
-                trial_data[probe_ix].key = info.key
-                trial_data[probe_ix].rt = info.rt
-                trial_data[probe_ix].correct_answer = String(trial_data[probe_ix].response_array[trial_data[probe_ix].test_index]);
-                trial_data[probe_ix].accuracy = info.key === trial_data[probe_ix].correct_answer
+            var keyboard_listener_2 =
+              this.jsPsych.pluginAPI.getKeyboardResponse({
+                callback_function: async function (info) {
+                  trial_data[probe_ix].key = info.key;
+                  trial_data[probe_ix].rt = info.rt;
+                  trial_data[probe_ix].correct_answer = String(
+                    trial_data[probe_ix].response_array[
+                      trial_data[probe_ix].test_index
+                    ]
+                  );
+                  trial_data[probe_ix].accuracy =
+                    info.key === trial_data[probe_ix].correct_answer;
 
-                // end trial
-                end_trial(trial_data);
-              },
-              valid_responses: trial_data[probe_ix].response_array.map(String), // this is for the second one
-              rt_method: "performance",
-              persist: false,
-              allow_held_key: false,
-            });
-
-            
-            },
+                  // end trial
+                  end_trial(trial_data);
+                },
+                valid_responses:
+                  trial_data[probe_ix].response_array.map(String), // this is for the second one
+                rt_method: "performance",
+                persist: false,
+                allow_held_key: false,
+              });
+          },
           valid_responses: trial_data[probe_ix].response_array.map(String), // this is for the first one
           rt_method: "performance",
           persist: false,
           allow_held_key: false,
         });
-      }
+      };
 
       // start the trial
       trial_procedure();
-      
-
-
 
       const end_trial = (input_data) => {
-
         // remove event listeners
         $(document).unbind();
         // data saving
         // let accuracy = jsPsych.pluginAPI.compareKeys(key, String(response_array[test_index]));
-        
 
         // save data into trial_data
         var trial_data = {
@@ -799,10 +814,10 @@ var jsPsychChangeLocDual = (function (jsPsych) {
           accuracy_2: input_data[1].accuracy,
         };
 
-        console.log(trial_data)
+        console.log(trial_data);
         // end trial and go to next
         this.jsPsych.finishTrial(trial_data);
-      }
+      };
     }
   }
   DualChangeLocPlugin.info = info;

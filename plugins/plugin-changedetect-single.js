@@ -1,8 +1,8 @@
 //helper functions go here
 
 // simple range
-function range(start=0,end){
-  return [...Array(end-start).keys()].map(i => i + start);
+function range(start = 0, end) {
+  return [...Array(end - start).keys()].map((i) => i + start);
 }
 
 // random number between min and max
@@ -11,38 +11,33 @@ function randomInt(min, max) {
 }
 
 // euclidean distance
-function dist_between_points(x1,y1,x2,y2){
-  return Math.sqrt((x2-x1)**2 + (y2-y1)**2);
+function dist_between_points(x1, y1, x2, y2) {
+  return Math.sqrt((x2 - x1) ** 2 + (y2 - y1) ** 2);
 }
 
 // Fisher-Yates shuffle
 
-function shuffleArray(arr){
-	ixs = [...Array(arr.length).keys()]
+function shuffleArray(arr) {
+  ixs = [...Array(arr.length).keys()];
   let newArr = [];
-  while (ixs.length){
+  while (ixs.length) {
     let i = Math.floor(Math.random() * ixs.length);
-    newArr.push(arr[ixs.splice(i,1)]);
+    newArr.push(arr[ixs.splice(i, 1)]);
   }
   return newArr;
 }
 
-function randChoice(arr){
-  return arr[Math.floor(Math.random()*arr.length)];
+function randChoice(arr) {
+  return arr[Math.floor(Math.random() * arr.length)];
 }
-
-
-
-
 
 var jsPsychChangeDetection = (function (jsPsych) {
   "use strict";
-  
+
   const info = {
     name: "ChangeDetectionPlugin",
     version: "1.0.0", // When working in a Javascript environment with no build, you will need to manually put set the version information. This is used for metadata purposes and publishing.
     parameters: {
-
       /** The duration of fixation prior to stimulus presentation */
       fixation_duration: {
         type: jsPsych.ParameterType.INT,
@@ -130,7 +125,7 @@ var jsPsychChangeDetection = (function (jsPsych) {
       keys: {
         type: jsPsych.ParameterType.OBJECT,
         pretty_name: "Response Keys",
-        default: ["z","/"],
+        default: ["z", "/"],
       },
 
       /** graphic parameters */
@@ -147,9 +142,8 @@ var jsPsychChangeDetection = (function (jsPsych) {
       /** Whether to show feedback */
       do_feedback: {
         type: jsPsych.ParameterType.BOOL,
-        default: false
-      }
-
+        default: false,
+      },
     },
     data: {
       /** Response key pressed */
@@ -201,11 +195,9 @@ var jsPsychChangeDetection = (function (jsPsych) {
         type: jsPsych.ParameterType.STRING,
         default: "change_detection",
       },
-      
-    }
+    },
   };
 
-  
   /**
    * **{plugin-changedetect-single}**
    *
@@ -221,19 +213,20 @@ var jsPsychChangeDetection = (function (jsPsych) {
       this.jsPsych = jsPsych;
     }
 
-
     trial(display_element, trial) {
-
       // CHECKS IF OVERRIDES ARE SET and set set_size appropriately if so
 
-      if (trial.stim_manual.length > 0 && trial.pos_manual.length > 0 && trial.stim_manual.length !== trial.pos_manual.length) {
+      if (
+        trial.stim_manual.length > 0 &&
+        trial.pos_manual.length > 0 &&
+        trial.stim_manual.length !== trial.pos_manual.length
+      ) {
         throw new Error("Stimulus array length does not match set size");
-      }else if (trial.stim_manual.length > 0) {
-          trial.set_size = trial.stim_manual.length;
-      }else if (trial.pos_manual.length > 0) {
-          trial.set_size = trial.pos_manual.length;
+      } else if (trial.stim_manual.length > 0) {
+        trial.set_size = trial.stim_manual.length;
+      } else if (trial.pos_manual.length > 0) {
+        trial.set_size = trial.pos_manual.length;
       }
-
 
       let test_index; // index of item to be changed
       let test_item; // new value for changed item
@@ -243,17 +236,15 @@ var jsPsychChangeDetection = (function (jsPsych) {
       const stim_buffer = trial.graphics.stim_buffer;
       const stim_size = trial.graphics.stim_size;
 
-
       // MAIN EXPERIMENT CODE
-
 
       //CREATE CANVAS OBJECT//
       display_element.innerHTML =
-      "<div id='jsPsych-changedetect-plugin' style='position: relative; width:" +
-      canvasSize +
-      "px; height:" +
-      canvasSize +
-      "px'></div>";
+        "<div id='jsPsych-changedetect-plugin' style='position: relative; width:" +
+        canvasSize +
+        "px; height:" +
+        canvasSize +
+        "px'></div>";
       display_element.querySelector("#jsPsych-changedetect-plugin").innerHTML +=
         "<canvas id='c', width = '" +
         canvasSize +
@@ -286,9 +277,7 @@ var jsPsychChangeDetection = (function (jsPsych) {
         canvas.requestRenderAll();
       }
 
-
       // GET POSITION ARRAYS
-
 
       let position_array = [];
 
@@ -297,22 +286,22 @@ var jsPsychChangeDetection = (function (jsPsych) {
         for (let i = 0; i < trial.set_size; i++) {
           position_array.push(trial.pos_manual[i]);
         }
-      }else{
-
+      } else {
         const stim_diag = Math.sqrt(2) * stim_size; // diagonal distance
 
         let i = 0;
         let loop_counter = 0;
-        position_loop:
-        while (position_array.length < trial.set_size) {
+        position_loop: while (position_array.length < trial.set_size) {
           i++;
-          
+
           // avoid infinite while loop
-          if (i>1000){
+          if (i > 1000) {
             if (loop_counter > 1000) {
               // this exists so we don't get stuck in an infinite loop. This is bad if it runs
-              alert('POSITION ASSIGNMENT ERROR: Please contact your experimenter.')
-              throw new Error("Could not find valid positions")
+              alert(
+                "POSITION ASSIGNMENT ERROR: Please contact your experimenter."
+              );
+              throw new Error("Could not find valid positions");
             }
             position_array = [];
             i = 0;
@@ -324,52 +313,51 @@ var jsPsychChangeDetection = (function (jsPsych) {
           let y = randomInt(edge_buffer, canvasSize - edge_buffer);
           let x2;
           let y2;
-      
-          if (dist_between_points(x, y, canvasSize/2, canvasSize/2) < stim_diag + stim_buffer) {
+
+          if (
+            dist_between_points(x, y, canvasSize / 2, canvasSize / 2) <
+            stim_diag + stim_buffer
+          ) {
             continue position_loop; // too close to center
           }
-          
+
           if (position_array.length > 0) {
-            for ([x2,y2] of position_array) {
-              if (dist_between_points(x, y, x2, y2) < stim_diag * 2 + stim_buffer) {
+            for ([x2, y2] of position_array) {
+              if (
+                dist_between_points(x, y, x2, y2) <
+                stim_diag * 2 + stim_buffer
+              ) {
                 continue position_loop; // too close to another stimulus
               }
             }
           }
-          
 
           // Add the position to the array if it passes the check
           position_array.push([x, y]);
+        }
       }
+
+      // CREATE STIMULI
+
+      let stimulus_array = [];
+      let stims_shuff = shuffleArray(trial.stimuli);
+
+      // if manual stimuli are set, use those
+      if (trial.stim_manual.length > 0) {
+        for (let i = 0; i < trial.set_size; i++) {
+          stimulus_array.push(trial.stim_manual[i]);
+        }
+      } else {
+        for (let i = 0; i < trial.set_size; i++) {
+          // append stimuli (should be already shuffled)
+          stimulus_array.push(stims_shuff[i]);
+        }
       }
 
+      // drawing functions, basically straight copy paste
 
-    // CREATE STIMULI
-
-    let stimulus_array = [];
-    let stims_shuff = shuffleArray(trial.stimuli);
-
-
-    // if manual stimuli are set, use those
-    if (trial.stim_manual.length > 0) {
-      for (let i = 0; i < trial.set_size; i++) {
-        stimulus_array.push(trial.stim_manual[i]);
-      }
-    } else {
-      for (let i = 0; i < trial.set_size; i++) { // append stimuli (should be already shuffled)
-        stimulus_array.push(stims_shuff[i]);
-      }
-    }
-
-
-    
-
-    // drawing functions, basically straight copy paste
-
-
-    const draw_colored_square = (color, pos, label) => {
-
-      return new Promise(async (resolve, reject) => {
+      const draw_colored_square = (color, pos, label) => {
+        return new Promise(async (resolve, reject) => {
           var rect = new fabric.Rect({
             width: stim_size,
             height: stim_size,
@@ -385,165 +373,161 @@ var jsPsychChangeDetection = (function (jsPsych) {
           canvas.add(rect);
           canvas.requestRenderAll();
           resolve();
-      });
-    };
-
-    const draw_image = (image, pos, label) => {
-      return new Promise((resolve, reject) => {
-        fabric.Image.fromURL(image, function(img) {
-          img.set({
-            left: pos[0] - stim_size / 2, // shift to convert from center to left and top
-            top: pos[1] - stim_size / 2,
-            hasBorders: false,
-            hasControls: false,
-            hoverCursor: "default",
-            lockMovementX: true,
-            lockMovementY: true,
-          });
-          img.scaleToWidth(stim_size);
-          img.scaleToHeight(stim_size);
-          canvas.add(img);
-          canvas.requestRenderAll();
-    
-          resolve();
         });
-      });
-    };
+      };
 
-    const draw_stim = async (stimulus, pos) => {
-      let pattern = /^#/;
-      let is_color = pattern.test(stimulus); // SEARCH FOR '#' IN STIMULUS ARGUMENT TO CONFIRM STIMULUS IS A COLOR
-      if (is_color) {
-        await draw_colored_square(stimulus, pos);
-      } else {
-        await draw_image(stimulus, pos);
-      }
-    };
+      const draw_image = (image, pos, label) => {
+        return new Promise((resolve, reject) => {
+          fabric.Image.fromURL(image, function (img) {
+            img.set({
+              left: pos[0] - stim_size / 2, // shift to convert from center to left and top
+              top: pos[1] - stim_size / 2,
+              hasBorders: false,
+              hasControls: false,
+              hoverCursor: "default",
+              lockMovementX: true,
+              lockMovementY: true,
+            });
+            img.scaleToWidth(stim_size);
+            img.scaleToHeight(stim_size);
+            canvas.add(img);
+            canvas.requestRenderAll();
 
-    const clear_screen = () => { // remove all stimuli on screen
-      canvas.getObjects().forEach((o) => {
-        if (!o.id) {
-          canvas.remove(o);
+            resolve();
+          });
+        });
+      };
+
+      const draw_stim = async (stimulus, pos) => {
+        let pattern = /^#/;
+        let is_color = pattern.test(stimulus); // SEARCH FOR '#' IN STIMULUS ARGUMENT TO CONFIRM STIMULUS IS A COLOR
+        if (is_color) {
+          await draw_colored_square(stimulus, pos);
+        } else {
+          await draw_image(stimulus, pos);
         }
-      });
-      canvas.requestRenderAll();
+      };
 
-    };
+      const clear_screen = () => {
+        // remove all stimuli on screen
+        canvas.getObjects().forEach((o) => {
+          if (!o.id) {
+            canvas.remove(o);
+          }
+        });
+        canvas.requestRenderAll();
+      };
 
-    const present_test =  () => {
+      const present_test = () => {
+        // pick an item to test
+        test_index = randomInt(0, stimulus_array.length);
 
+        // pick values here
 
-      // pick an item to test
-      test_index = randomInt(0,stimulus_array.length);
+        // manual probe
+        if (trial.probe_manual !== null) {
+          test_item = trial.probe_manual;
+          if (!stimulus_array.includes(test_item)) {
+            // unexpected? will always overwrite change. also doesn't check positions
+            trial.change = true;
+          } else {
+            trial.change = false;
+          }
+        } else {
+          if (trial.change === null) {
+            trial.change = Math.random() < 0.5; // if change is not set, randomly assign
+          }
 
-      // pick values here
-
-      // manual probe
-      if (trial.probe_manual !== null) {
-        test_item = trial.probe_manual;
-        if (!stimulus_array.includes(test_item)){ // unexpected? will always overwrite change. also doesn't check positions
-          trial.change = true;
-        }else{
-          trial.change = false;
+          if (trial.change) {
+            test_item = randChoice(
+              trial.stimuli.filter((x) => !stimulus_array.includes(x))
+            ); // if change, pick a new item
+          } else {
+            test_item = stimulus_array[test_index]; // if no change, pick the existing item
+          }
         }
-      }else{
-        if (trial.change === null) {
-          trial.change = Math.random() < 0.5; // if change is not set, randomly assign
+
+        if (trial.probe_pos_manual.length > 0) {
+          // probe position
+          if (trial.probe_pos_manual.length !== 2) {
+            throw new Error("Probe position array must have ONLY two values");
+          }
+
+          var probe_position = trial.probe_pos_manual;
+        } else {
+          var probe_position = position_array[test_index]; // otherwise pick the corresponding location
         }
 
-        if (trial.change) {
-          test_item = randChoice(trial.stimuli.filter(x => !stimulus_array.includes(x))); // if change, pick a new item
-        }else{
-          test_item = stimulus_array[test_index]; // if no change, pick the existing item
-        }
-      }
+        // present probe here
 
-      if (trial.probe_pos_manual.length > 0) { // probe position
-        if (trial.probe_pos_manual.length !== 2) {
-          throw new Error("Probe position array must have ONLY two values");
-        }
+        draw_stim(test_item, probe_position);
 
-        var probe_position = trial.probe_pos_manual;
-      } else {
-        var probe_position = position_array[test_index]; // otherwise pick the corresponding location
-      }
+        // event listener
+        var keyboard_listener = jsPsych.pluginAPI.getKeyboardResponse({
+          callback_function: afterResponse,
+          valid_responses: trial.keys,
+          rt_method: "performance",
+          persist: false,
+          allow_held_key: false,
+        });
+      };
 
-      // present probe here
-
-      draw_stim(test_item, probe_position);
-
-
-
-
-
-      // event listener
-      var keyboard_listener = jsPsych.pluginAPI.getKeyboardResponse({
-        callback_function: afterResponse,
-        valid_responses: trial.keys,
-        rt_method: "performance",
-        persist: false,
-        allow_held_key: false,
-      });
-    };
-
-    const present_stimuli = (stimulus_array, position_array,delay,duration) => {
-      return new Promise(async (resolve, reject) => {
-
-
-
-      this.jsPsych.pluginAPI.setTimeout(async function () {
-        for (let istim = 0; istim < stimulus_array.length; istim++) { // show stimuli with response
-          await draw_stim(stimulus_array[istim], position_array[istim]);
-        }
-        this.jsPsych.pluginAPI.setTimeout(function () { // clear screen
-          clear_screen();
-          resolve();
-        },
-          duration);
-      },
-      delay);
-    })};
-
-
-    // MAIN TRIAL PROCEDURE HERE
-
-    const trial_procedure = async () => {
-
-
-
-      await present_stimuli(
+      const present_stimuli = (
         stimulus_array,
         position_array,
-        trial.fixation_duration,
-        trial.stim_duration
-      )
+        delay,
+        duration
+      ) => {
+        return new Promise(async (resolve, reject) => {
+          this.jsPsych.pluginAPI.setTimeout(async function () {
+            for (let istim = 0; istim < stimulus_array.length; istim++) {
+              // show stimuli with response
+              await draw_stim(stimulus_array[istim], position_array[istim]);
+            }
+            this.jsPsych.pluginAPI.setTimeout(function () {
+              // clear screen
+              clear_screen();
+              resolve();
+            }, duration);
+          }, delay);
+        });
+      };
 
+      // MAIN TRIAL PROCEDURE HERE
+
+      const trial_procedure = async () => {
+        await present_stimuli(
+          stimulus_array,
+          position_array,
+          trial.fixation_duration,
+          trial.stim_duration
+        );
+
+        this.jsPsych.pluginAPI.setTimeout(function () {
+          present_test();
+        }, trial.delay_duration);
+      };
+
+      // RUN HERE
+      show_fixation();
       this.jsPsych.pluginAPI.setTimeout(function () {
-        present_test();
-      },trial.delay_duration);
-    };
+        //INTERTRIAL INTERVAL then run trial
+        trial_procedure();
+      }, trial.fixation_duration);
 
-    // RUN HERE
-    show_fixation();
-    this.jsPsych.pluginAPI.setTimeout(function () {
-      //INTERTRIAL INTERVAL then run trial
-      trial_procedure();
-    }, trial.fixation_duration);
-    
-    function afterResponse(info){
-      end_trial(info.key,info.rt)
-    }
+      function afterResponse(info) {
+        end_trial(info.key, info.rt);
+      }
 
-    const end_trial = (key,rt) => {
-
+      const end_trial = (key, rt) => {
         // remove event listeners
         $(document).unbind();
         // data saving
         // accuracy: first key is no change second is change
 
-        if (trial.change){
+        if (trial.change) {
           var correct_answer = trial.keys[1];
-        }else{
+        } else {
           var correct_answer = trial.keys[0];
         }
 
@@ -561,21 +545,18 @@ var jsPsychChangeDetection = (function (jsPsych) {
           change: trial.change,
           set_size: trial.set_size,
           accuracy: accuracy,
-          
-
         };
-        console.log(trial_data)
+        console.log(trial_data);
         // display feedback
 
-        if (trial.do_feedback){
+        if (trial.do_feedback) {
           canvas.getObjects().forEach((o) => {
             canvas.remove(o);
-            
           });
           canvas.requestRenderAll();
 
           let feedback_text = accuracy ? "Correct" : "Incorrect";
-          console.log(feedback_text)
+          console.log(feedback_text);
 
           let feedback = new fabric.Text(feedback_text, {
             id: "feedback",
@@ -590,20 +571,18 @@ var jsPsychChangeDetection = (function (jsPsych) {
           canvas.add(feedback);
           feedback.center();
 
-          canvas.requestRenderAll()
-        
+          canvas.requestRenderAll();
 
           this.jsPsych.pluginAPI.setTimeout(function () {
             canvas.remove(feedback);
-            canvas.requestRenderAll()
+            canvas.requestRenderAll();
             this.jsPsych.finishTrial(trial_data);
-
-          },500);
-      }else{
+          }, 500);
+        } else {
           // end trial and go to next
           this.jsPsych.finishTrial(trial_data);
-      }
-    }
+        }
+      };
     }
   }
   ChangeDetectionPlugin.info = info;
