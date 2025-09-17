@@ -250,10 +250,11 @@ var jsPsychVisualSearch = (function (jspsych) {
 
       // CREATE STIMULI
 
+      let locations = Object.keys(trial.pos_bin_centers);
       let distractors = shuffleArray(trial.distractor_stims);
 
       if (trial.target_lateralization === undefined) {
-        var target_lateralization = randomInt(0, 2) === 0 ? "left" : "right"; // assign at random
+        var target_lateralization = locations[randomInt(0, locations.length)]; // assign at random
       } else {
         var target_lateralization = trial.target_lateralization; // use provided value
       }
@@ -272,37 +273,34 @@ var jsPsychVisualSearch = (function (jspsych) {
       }
 
       // randomize order of position bins
-      var bins_to_sample = {
-        left: shuffleArray(trial.pos_bin_centers.left),
-        right: shuffleArray(trial.pos_bin_centers.right),
-      };
+
+      var bins_to_sample = Object.fromEntries(
+        Object.entries(trial.pos_bin_centers).map(([k, v]) => [
+          k,
+          shuffleArray(v),
+        ])
+      ); // shuffle each element
 
       // NOW ASSIGN POSITIONS
 
       // ASSIGN LOCATION BINS
 
       // assign location bin for target letter
-      let bin_array = bins_to_sample[target_lateralization].splice(0, 1);
+      var bin_array = [];
+      bin_array.push(bins_to_sample[target_lateralization].splice(0, 1)[0]);
+      var distractor_choices = shuffleArray(Object.keys(bins_to_sample));
+      distractor_choices.splice(
+        distractor_choices.indexOf(target_lateralization),
+        1
+      ); // remove target side from choices
 
-      let other_side = ["left", "right"].filter(
-        (x) => !(x == target_lateralization)
-      )[0];
+      while (bin_array.length < trial.n_placeholders + 1) {
+        if (distractor_choices.length == 0) {
+          distractor_choices = shuffleArray(Object.keys(bins_to_sample));
+        }
 
-      bin_array = bin_array.concat(
-        bins_to_sample[other_side].splice(
-          0,
-          Math.ceil(trial.n_placeholders / 2)
-        )
-      );
-
-      if (trial.n_placeholders > 1) {
-        // if only one placeholder only need to put on other side
-        bin_array = bin_array.concat(
-          bins_to_sample[target_lateralization].splice(
-            0,
-            Math.floor(trial.n_placeholders / 2)
-          )
-        );
+        let side = distractor_choices.splice(0, 1)[0]; // take one side
+        bin_array.push(bins_to_sample[side].splice(0, 1)[0]);
       }
 
       var position_array = bin_array.map((bin) => {
@@ -432,9 +430,12 @@ var jsPsychVisualSearch = (function (jspsych) {
         }, trial.fixation_duration);
 
         // wait max duration and end trial if no response
-        this.jsPsych.pluginAPI.setTimeout(function () {
-          end_trial(null, null);
-        }, trial.max_trial_duration);
+
+        if (trial.max_trial_duration !== null) {
+          this.jsPsych.pluginAPI.setTimeout(function () {
+            end_trial(null, null);
+          }, trial.max_trial_duration);
+        }
       };
 
       function afterResponse(info) {
